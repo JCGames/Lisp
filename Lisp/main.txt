@@ -1,9 +1,8 @@
-﻿; we want (better) exception handling
-; we want labeled parameters
+﻿; we want labeled parameters
 ; we want variadic args
 ; we want structures (dictionaries)
 ; we want dot accessors
 ; we want windowing graphics library
 ; *     we want reactivity
 
-fdsaf
+(print "Hello, world!")

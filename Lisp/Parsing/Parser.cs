@@ -109,7 +109,7 @@ public class Parser
 
         if (_sourceFile.EndOfFile && c is not ')')
         {
-            // throw error here
+            Report.Error("A list must close with a closing parenthesis.", list.Location);
         } 
         
         return list;
@@ -117,6 +117,13 @@ public class Parser
     
     private TokenNode ReadStringLiteralToken(char startQuote)
     {
+        var stringLiteralLocation = new Location
+        {
+            SourceFile = _sourceFile,
+            Line = _sourceFile.CurrentLine,
+            Position = _sourceFile.CurrentPosition
+        };
+        
         var token = string.Empty;
         var c = '\0';
         
@@ -131,7 +138,7 @@ public class Parser
 
         if (_sourceFile.EndOfFile && c != startQuote)
         {
-            // throw error
+            Report.Error("Missing closing quote.", stringLiteralLocation);
         }
 
         return new StringLiteralNode
@@ -196,7 +203,12 @@ public class Parser
             }
             else if (c is '.' && foundPoint)
             {
-                // throw error
+                Report.Error("Too many decimal points.", new Location
+                {
+                    SourceFile = _sourceFile,
+                    Line = _sourceFile.CurrentLine,
+                    Position = _sourceFile.CurrentPosition
+                });
             }
             
             token += c;
