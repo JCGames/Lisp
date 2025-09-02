@@ -8,6 +8,8 @@
 (def print Turbo.Print)
 (def lambda Turbo.CreateLambda)
 (def if Turbo.If)
+(def switch Turbo.Switch)
 
 (import "math.lisp")
 (import "boolean.lisp")
+

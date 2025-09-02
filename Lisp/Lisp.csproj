@@ -12,7 +12,7 @@
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
 
-      <None Update="Runtime\StandardLibrary\preamble.lisp">
+      <None Update="Runtime\StandardLibrary\prelude.lisp">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
 

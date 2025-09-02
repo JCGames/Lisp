@@ -1,7 +1,7 @@
 (def * Turbo.Multiply)
 (def / Turbo.Divide)
 (def + Turbo.Add)
-(def - Turbo.Subtract)
+(def - Turbo.SubtractOrNegate)
 (def % Turbo.Modulo)
 
 ; increment

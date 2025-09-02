@@ -1,7 +1,7 @@
 ﻿using Lisp;
 using Lisp.Parsing;
 
-var standardLibrary = new SourceFile(new FileInfo("Runtime/StandardLibrary/preamble.lisp"));
+var standardLibrary = new SourceFile(new FileInfo("Runtime/StandardLibrary/prelude.lisp"));
 var sourceFile = new SourceFile(new FileInfo("main.txt"));
 
 var parserStandardLibrary = new Parser(standardLibrary);

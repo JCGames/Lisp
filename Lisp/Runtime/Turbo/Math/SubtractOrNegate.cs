@@ -5,7 +5,7 @@ using Lisp.Types;
 
 namespace Lisp.Turbo.Math;
 
-public class Subtract : ITurboFunction
+public class SubtractOrNegate : ITurboFunction
 {
     private static readonly List<IdentifierNode> ArgumentDeclaration =
     [
@@ -20,9 +20,14 @@ public class Subtract : ITurboFunction
     
     public BaseLispValue Execute(List<Node> parameters, LispScope scope)
     {
-        if (parameters.Count < 2) throw Report.Error(new WrongArgumentCountReportMessage(Arguments, parameters.Count));
+        if (parameters.Count < 1) throw Report.Error(new WrongArgumentCountReportMessage(Arguments, parameters.Count));
 
-        var accum = GetValue(parameters[0], scope);        
+        var accum = GetValue(parameters[0], scope);
+        if (parameters.Count == 1)
+        {
+            return new LispNumberValue(-accum);
+        }
+        
         foreach (var parameter in parameters[1..])
         {
             var value = GetValue(parameter, scope);

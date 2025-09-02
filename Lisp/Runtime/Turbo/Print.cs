@@ -24,7 +24,7 @@ public class Print : ITurboFunction
         
         var value = Runner.EvaluateNode(parameters[0], scope);
         
-        Console.WriteLine(value);
+        Runner.StdOut.WriteLine(value);
         
         return new LispVoidValue();
     }

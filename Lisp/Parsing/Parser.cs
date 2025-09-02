@@ -112,7 +112,7 @@ public class Parser
         {
             return ReadStringLiteralToken(c);
         }
-        else if (char.IsDigit(c) || (c is '.' && char.IsDigit(_sourceFile.PeekChar())))
+        else if (char.IsDigit(c) || (c is '.' or '-' && char.IsDigit(_sourceFile.PeekChar())))
         {
             return ReadNumberToken(c);
         }

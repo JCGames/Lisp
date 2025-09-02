@@ -5,6 +5,7 @@ namespace Lisp.Diagnostics;
 
 public static class Report
 {
+    public static bool PreferThrownErrors = false;
     private static List<string> _errors = [];
 
     [DoesNotReturn]
@@ -57,9 +58,16 @@ public static class Report
         }
         
         Console.ForegroundColor = originalColor;
-        
-        Environment.Exit(1);
 
+        if (PreferThrownErrors)
+        {
+            throw new Exception(message);    
+        }
+        else
+        {
+            Environment.Exit(1);    
+        }
+        
         return new Exception();
     }
     

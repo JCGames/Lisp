@@ -14,7 +14,7 @@ public class LispNumberValue : LispValue
         Value = value;
     }
     
-    public override string ToString() => Value.ToString();
+    public override string ToString() => Value.ToString("0.##########");
 
     protected override bool Equals(BaseLispValue other) => 
         other is LispNumberValue lispDecimal

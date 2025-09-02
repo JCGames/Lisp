@@ -2,7 +2,6 @@
 
 namespace Lisp.Parsing.Nodes;
 
-
 public abstract class TokenNode : Node
 {
     public required string Text { get; set; }
