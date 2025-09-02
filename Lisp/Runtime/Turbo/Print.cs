@@ -20,7 +20,7 @@ public class Print : ITurboFunction
     
     public BaseLispValue Execute(List<Node> parameters, LispScope scope)
     {
-        if (parameters.Count != 1) throw new WrongArgumentCountException(Arguments, parameters.Count);
+        if (parameters.Count != 1) Report.Error(new WrongArgumentCountReportMessage(Arguments, parameters.Count));
         
         var value = Runner.EvaluateNode(parameters[0], scope);
         

@@ -1,3 +1,4 @@
+using Lisp.Diagnostics;
 using Lisp.Exceptions;
 using Lisp.Parsing.Nodes;
 
@@ -12,7 +13,7 @@ public class LispFunctionValue : LispValue, IExecutableLispValue
     {
         Arguments = arguments ?? throw new ArgumentNullException(nameof(arguments));
         Definition = definition ?? throw new ArgumentNullException(nameof(definition));
-        if (Definition.Count == 0) throw new InvalidFunctionException("A function must contain a body!");
+        if (Definition.Count == 0) throw Report.Error(new InvalidFunctionReportMessage("A function must contain a body!"));
     }
 
 
@@ -33,14 +34,14 @@ public class LispFunctionValue : LispValue, IExecutableLispValue
 
     public BaseLispValue Execute(List<Node> parameters, LispScope scope)
     {
-        if (parameters.Count != Arguments.Count) throw new WrongArgumentCountException(Arguments, parameters.Count);
+        if (parameters.Count != Arguments.Count) Report.Error(new WrongArgumentCountReportMessage(Arguments, parameters.Count));
 
         scope = scope.PushScope();
         for (var i = 0; i < Arguments.Count; i++)
         {
             var name = Arguments[i].Text;
             var value = Runner.EvaluateNode(parameters[i], scope);
-            if (value is not LispValue lispValue) throw new WrongArgumentTypeException($"{value} is not a valid value.");
+            if (value is not LispValue lispValue) throw Report.Error(new WrongArgumentTypeReportMessage($"{value} is not a valid value."));
 
             scope.UpdateScope(name, lispValue);
         }

@@ -30,10 +30,10 @@ public class If : ITurboFunction
     
     public BaseLispValue Execute(List<Node> parameters, LispScope scope)
     {
-        if (parameters.Count < 2) throw new WrongArgumentCountException(ArgumentDeclaration, parameters.Count, 2);
+        if (parameters.Count < 2) Report.Error(new WrongArgumentCountReportMessage(ArgumentDeclaration, parameters.Count, 2));
 
         var condition = Runner.EvaluateNode(parameters[0], scope);
-        if (condition is not LispBooleanValue boolean) throw new WrongArgumentTypeException("If condition should return a boolean.");
+        if (condition is not LispBooleanValue boolean) throw Report.Error(new WrongArgumentTypeReportMessage("If condition should return a boolean."));
 
         if (boolean.Value)
         {

@@ -20,12 +20,13 @@ public class And : ITurboFunction
 
     public BaseLispValue Execute(List<Node> parameters, LispScope scope)
     {
-        if (parameters.Count < 2) throw new WrongArgumentCountException(Arguments, parameters.Count, 2);
+        if (parameters.Count < 2) Report.Error(new WrongArgumentCountReportMessage(Arguments, parameters.Count, 2));
 
         foreach (var parameter in parameters)
         {
             var value = Runner.EvaluateNode(parameter, scope);
-            if (value is not LispBooleanValue boolValue) throw new WrongArgumentTypeException("And expects it's arguments to be booleans.");
+            
+            if (value is not LispBooleanValue boolValue) throw Report.Error(new WrongArgumentTypeReportMessage("And expects it's arguments to be booleans."));
             
             if (!boolValue.Value) return new LispBooleanValue(false);
         }

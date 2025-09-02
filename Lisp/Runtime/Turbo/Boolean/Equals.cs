@@ -20,7 +20,7 @@ public class Equals : ITurboFunction
     
     public BaseLispValue Execute(List<Node> parameters, LispScope scope)
     {
-        if (parameters.Count < 2) throw new WrongArgumentCountException(Arguments, parameters.Count, 2);
+        if (parameters.Count < 2) Report.Error(new WrongArgumentCountReportMessage(Arguments, parameters.Count, 2));
         
         var left = Runner.EvaluateNode(parameters[0], scope);
         var right = Runner.EvaluateNode(parameters[1], scope);

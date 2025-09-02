@@ -4,17 +4,18 @@ public class SourceFile
 {
     public FileInfo? FileInfo { get; set; }
     
-    private readonly string _text;
+    public string Text { get; set; }
     private readonly List<int> _lineStarts = [];
-    
-    public int CurrentLine { get; private set; }
+
+    private int _currentLineZeroIndexed;
+    public int CurrentLine => _currentLineZeroIndexed + 1;
     public int CurrentPosition { get; private set; }
 
-    public bool EndOfFile => CurrentPosition >= _text.Length;
+    public bool EndOfFile => CurrentPosition >= Text.Length;
     
     public SourceFile(string text)
     {
-        _text = text;
+        Text = text;
     }
 
     public SourceFile(FileInfo fileInfo)
@@ -22,18 +23,18 @@ public class SourceFile
         try
         {
             FileInfo = fileInfo;
-            _text = File.ReadAllText(fileInfo.FullName);
+            Text = File.ReadAllText(fileInfo.FullName);
 
             _lineStarts.Add(0);
             
-            for (var i = 0; i < _text.Length; i++)
+            for (var i = 0; i < Text.Length; i++)
             {
-                if (_text[i] is '\r' && i + 1 < _text.Length && _text[i + 1] is '\n')
+                if (Text[i] is '\r' && i + 1 < Text.Length && Text[i + 1] is '\n')
                 {
                     i++;
                     _lineStarts.Add(i + 1);
                 }
-                else if (_text[i] is '\r' or '\n')
+                else if (Text[i] is '\r' or '\n')
                 {
                     _lineStarts.Add(i);
                 }
@@ -42,25 +43,30 @@ public class SourceFile
         catch (Exception ex)
         {
             Console.WriteLine(ex);
-            _text = string.Empty;
+            Text = string.Empty;
         }
     }
 
     public char ReadChar()
     {
-        if (CurrentPosition >= _text.Length) return '\0';
+        if (CurrentPosition >= Text.Length) return '\0';
         
-        if (CurrentLine + 1 < _lineStarts.Count && CurrentPosition == _lineStarts[CurrentLine + 1] + 1)
+        if (_currentLineZeroIndexed + 1 < _lineStarts.Count && CurrentPosition == _lineStarts[_currentLineZeroIndexed + 1])
         {
-            CurrentLine++;
+            _currentLineZeroIndexed++;
         }
         
-        return _text[CurrentPosition++];
+        return Text[CurrentPosition++];
     }
     
     public char PeekChar()
     {
-        if (CurrentPosition >= _text.Length) return '\0';
-        return _text[CurrentPosition];
+        if (CurrentPosition >= Text.Length) return '\0';
+        return Text[CurrentPosition];
+    }
+
+    public (int start, int end) GetStartAndEndOfLine(int line)
+    {
+        return (_lineStarts[line - 1], line < _lineStarts.Count ? _lineStarts[line] : _lineStarts[^1]);
     }
 }

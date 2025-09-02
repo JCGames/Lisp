@@ -10,9 +10,4 @@ var parser = new Parser(sourceFile);
 var standardLibraryList = parserStandardLibrary.Parse();
 var list = parser.Parse();
 
-foreach (var lispList in list)
-{
-    lispList.Print("");
-}
-
 Runner.Run([..standardLibraryList, ..list]);

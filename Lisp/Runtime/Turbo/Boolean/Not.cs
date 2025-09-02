@@ -20,10 +20,10 @@ public class Not : ITurboFunction
     
     public BaseLispValue Execute(List<Node> parameters, LispScope scope)
     {
-        if (parameters.Count != 1) throw new WrongArgumentCountException(Arguments, parameters.Count);
+        if (parameters.Count != 1) Report.Error(new WrongArgumentCountReportMessage(Arguments, parameters.Count));
         
         var value = Runner.EvaluateNode(parameters[0], scope);
-        if (value is not LispBooleanValue boolValue) throw new WrongArgumentTypeException("Not only works with boolean arguments");
+        if (value is not LispBooleanValue boolValue) throw Report.Error(new WrongArgumentTypeReportMessage("Not only works with boolean arguments"));
         
         return new LispBooleanValue(!boolValue.Value);
     }

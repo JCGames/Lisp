@@ -1,6 +1,7 @@
 ﻿using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Net.Security;
+using Lisp.Diagnostics;
 using Lisp.Exceptions;
 using Lisp.Parsing.Nodes;
 using Lisp.Turbo;
@@ -26,8 +27,8 @@ public static class Runner
         ListNode list => ExecuteList(list, scope),
         IdentifierNode identifier => scope.Read(identifier.Text),
         NumberLiteralNode number => new LispNumberValue(number.Value),
-        StringLiteralNode stringLiteral => scope.Read(stringLiteral.Text),
-        _ => throw new NotImplementedException("Unknown token type."),
+        StringLiteralNode stringLiteral => new LispStringValue(stringLiteral.Text),
+        _ => throw new NotImplementedException("Unknown token type.")
     };
 
     private static BaseLispValue ExecuteList(ListNode listNode, LispScope scope)
@@ -36,7 +37,7 @@ public static class Runner
 
         var function = EvaluateNode(listNode.Nodes[0], scope);
 
-        if (function is not IExecutableLispValue executable) throw new NotAFunctionException();
+        if (function is not IExecutableLispValue executable) throw Report.Error(new NotAFunctionReportMessage());
         
         return executable.Execute(listNode.Nodes[1..], scope);
     }

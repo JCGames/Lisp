@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using Lisp.Diagnostics;
 using Lisp.Exceptions;
 using Lisp.Types;
 
@@ -53,7 +54,7 @@ public class LispScope
             _global._scope.TryGetValue(identifier, out value);
         }
         
-        if (value is null) throw new UndefinedIdentifierException(identifier);
+        if (value is null) throw Report.Error(new UndefinedIdentifierReportMessage(identifier));
         
         return value;
     }

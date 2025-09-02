@@ -25,12 +25,12 @@ public class GreaterThanOrEqualTo : ITurboFunction
     
     public BaseLispValue Execute(List<Node> parameters, LispScope scope)
     {
-        if (parameters.Count != 2) throw new WrongArgumentCountException(Arguments, parameters.Count);
+        if (parameters.Count != 2) Report.Error(new WrongArgumentCountReportMessage(Arguments, parameters.Count));
         
         var left = Runner.EvaluateNode(parameters[0], scope);
-        if (left is not LispNumberValue leftNumber) throw new WrongArgumentTypeException("Expected the left value to be a number");
+        if (left is not LispNumberValue leftNumber) throw Report.Error(new WrongArgumentTypeReportMessage("Expected the left value to be a number"));
         var right = Runner.EvaluateNode(parameters[1], scope);
-        if (right is not LispNumberValue rightNumber) throw new WrongArgumentTypeException("Expected the right value to be a number");
+        if (right is not LispNumberValue rightNumber) throw Report.Error(new WrongArgumentTypeReportMessage("Expected the right value to be a number"));
 
         var result = leftNumber.Value >= rightNumber.Value;
         return new LispBooleanValue(result);

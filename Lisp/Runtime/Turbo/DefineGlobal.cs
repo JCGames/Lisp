@@ -25,13 +25,13 @@ public class DefineGlobal : ITurboFunction
     
     public BaseLispValue Execute(List<Node> parameters, LispScope scope)
     {
-        if (parameters.Count != 2) throw new WrongArgumentCountException(Arguments, parameters.Count);
+        if (parameters.Count != 2) Report.Error(new WrongArgumentCountReportMessage(Arguments, parameters.Count));
 
-        if (parameters[0] is not IdentifierNode identifier) throw new WrongArgumentTypeException($"Expected {Arguments[0].Text} to be an {nameof(IdentifierNode)}.");
+        if (parameters[0] is not IdentifierNode identifier) throw Report.Error(new WrongArgumentTypeReportMessage($"Expected {Arguments[0].Text} to be an {nameof(IdentifierNode)}."));
         var identifierName = identifier.Text;
         
         var value = Runner.EvaluateNode(parameters[1], scope);
-        if (value is not LispValue lispValue) throw new WrongArgumentTypeException($"{value} is not a valid value.");
+        if (value is not LispValue lispValue) throw Report.Error(new WrongArgumentTypeReportMessage($"{value} is not a valid value."));
         
         scope.UpdateGlobalScope(identifierName, lispValue);
         

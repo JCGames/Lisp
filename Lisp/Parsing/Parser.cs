@@ -21,7 +21,12 @@ public class Parser
             var c = _sourceFile.ReadChar();
 
             if (char.IsWhiteSpace(c)) continue;
-            if (c is ';') SkipComment();
+
+            if (c is ';')
+            {
+                SkipComment();
+                continue;
+            }
             
             if (c is not '(')
             {
