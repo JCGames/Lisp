@@ -66,44 +66,16 @@ public class Parser
             
             if (c is ')') break;
 
-            if (c is '\r' && _sourceFile.PeekChar() is '\n')
+            var errorLocation = new Location
             {
-                _sourceFile.ReadChar();
-            }
-            else if (c is '\r' or '\n')
+                Line = _sourceFile.CurrentLine,
+                Position = _sourceFile.CurrentPosition,
+                SourceFile = _sourceFile
+            };
+
+            if (ReadNode(c) is { } value)
             {
-            }
-            else if (c is ';')
-            {
-                SkipComment();
-            }
-            else if (c is '\'' && _sourceFile.PeekChar() is '(')
-            {
-                _sourceFile.ReadChar();
-                
-                var newList = ReadTokens();
-                newList.IsQuoted = true;
-                list.Nodes.Add(newList);
-            }
-            else if (c is '"')
-            {
-                list.Nodes.Add(ReadStringLiteralToken(c));
-            }
-            else if (char.IsDigit(c) || (c is '.' && char.IsDigit(_sourceFile.PeekChar())))
-            {
-                list.Nodes.Add(ReadNumberToken(c));
-            }
-            else if (char.IsWhiteSpace(c))
-            {
-                SkipWhitespace();
-            }
-            else if (c is '(')
-            {
-                list.Nodes.Add(ReadTokens());
-            }
-            else
-            {
-                list.Nodes.Add(ReadIdentifierToken(c));
+                list.Nodes.Add(value);
             }
         }
 
@@ -113,6 +85,133 @@ public class Parser
         } 
         
         return list;
+    }
+
+    private Node? ReadNode(char c)
+    {
+        if (c is '\r' && _sourceFile.PeekChar() is '\n')
+        {
+            _sourceFile.ReadChar();
+        }
+        else if (c is '\r' or '\n')
+        {
+        }
+        else if (c is ';')
+        {
+            SkipComment();
+        }
+        else if (c is '\'' && _sourceFile.PeekChar() is '(')
+        {
+            _sourceFile.ReadChar();
+                
+            var newList = ReadTokens();
+            newList.IsQuoted = true;
+            return newList;
+        }
+        else if (c is '"')
+        {
+            return ReadStringLiteralToken(c);
+        }
+        else if (char.IsDigit(c) || (c is '.' && char.IsDigit(_sourceFile.PeekChar())))
+        {
+            return ReadNumberToken(c);
+        }
+        else if (char.IsWhiteSpace(c))
+        {
+            SkipWhitespace();
+        }
+        else if (c is '(')
+        {
+            return ReadTokens();
+        }
+        else if (c is '{')
+        {
+            ReadStruct();
+        }
+        else
+        {
+            return ReadIdentifierToken(c);
+        }
+
+        return null;
+    }
+
+    private StructNode ReadStruct()
+    {
+        var structLocation = new Location
+        {
+            SourceFile = _sourceFile,
+            Line = _sourceFile.CurrentLine,
+            Position = _sourceFile.CurrentPosition
+        };
+
+        var structNode = new StructNode
+        {
+            Location = structLocation,
+            Struct = []
+        };
+
+        var c = '\0';
+        
+        while (!_sourceFile.EndOfFile)
+        {
+            c = ReadToNonWhitespace();
+            if (c is '}') break;
+
+            var node = ReadNode(c);
+
+            if (node is null)
+            {
+                var location = new Location
+                {
+                    SourceFile = _sourceFile,
+                    Line = _sourceFile.CurrentLine,
+                    Position = _sourceFile.CurrentPosition
+                };
+                
+                throw Report.Error("Must be a label.", location);
+            }
+            
+            if (node is not IdentifierNode label || label.Text.Length < 2 || !label.Text.EndsWith(':'))
+            {
+                throw Report.Error("Must be a label.", node.Location);
+            }
+            
+            label.Text = label.Text[..^1];
+            
+            c = ReadToNonWhitespaceRespectEOL();
+
+            if (c is '}')
+            {
+                throw Report.Error("Must have a value.", label.Location);
+            }
+
+            node = ReadNode(c);
+
+            if (node is null)
+            {
+                throw Report.Error("Must have a value.", label.Location);
+            }
+            
+            structNode.Struct.Add(new KeyValueNode
+            {
+                Location = new Location
+                {
+                    SourceFile = _sourceFile,
+                    Line = _sourceFile.CurrentLine,
+                    Position = _sourceFile.CurrentPosition
+                },
+                Key = label,
+                Value = node
+            });
+        }
+        
+        if (_sourceFile.EndOfFile && c is not '}')
+        {
+            Report.Error("Missing closing bracket.", structLocation);
+        }
+        
+        return structNode;
     }
     
     private TokenNode ReadStringLiteralToken(char startQuote)
@@ -257,5 +356,34 @@ public class Parser
                 break;
             }
         }
+    }
+
+    private char ReadToNonWhitespace()
+    {
+        while (!_sourceFile.EndOfFile)
+        {
+            if (!char.IsWhiteSpace(_sourceFile.PeekChar())) break;
+            
+            _sourceFile.ReadChar();
+        }
+        
+        return _sourceFile.ReadChar();
+    }
+    
+    private char ReadToNonWhitespaceRespectEOL()
+    {
+        while (!_sourceFile.EndOfFile)
+        {
+            if (_sourceFile.PeekChar() is '\r' or '\n')
+            {
+                break;
+            }
+            
+            if (!char.IsWhiteSpace(_sourceFile.PeekChar())) break;
+            
+            _sourceFile.ReadChar();
+        }
+        
+        return _sourceFile.ReadChar();
     }
 }

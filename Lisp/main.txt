@@ -5,4 +5,7 @@
 ; we want windowing graphics library
 ; *     we want reactivity
 
-(print "Hello, world!")
+(let c { 
+    value: 2.2
+    value2: 2.2
+})

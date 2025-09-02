@@ -15,4 +15,3 @@
 ; power
 (def pow (lambda (a)
     (* a a)))
-
