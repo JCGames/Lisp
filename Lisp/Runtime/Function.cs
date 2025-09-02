@@ -4,6 +4,6 @@ namespace Lisp;
 
 public class Function
 {
-    public LispList Definition;
-    public List<LispList> Body;
+    public ListNode Definition;
+    public List<ListNode> Body;
 }

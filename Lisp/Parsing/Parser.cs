@@ -12,9 +12,9 @@ public class Parser
         _sourceFile = sourceFile;
     }
     
-    public List<LispList> Parse()
+    public List<ListNode> Parse()
     {
-        var list = new List<LispList>();
+        var list = new List<ListNode>();
         
         while (!_sourceFile.EndOfFile)
         {
@@ -35,9 +35,9 @@ public class Parser
         return list;
     }
 
-    private LispList ReadTokens()
+    private ListNode ReadTokens()
     {
-        var list = new LispList();
+        var list = new ListNode();
 
         var c = '\0';
             
@@ -98,7 +98,7 @@ public class Parser
         return list;
     }
     
-    private Token ReadStringLiteralToken(char startQuote)
+    private TokenNode ReadStringLiteralToken(char startQuote)
     {
         var token = string.Empty;
         var c = '\0';
@@ -117,16 +117,15 @@ public class Parser
             // throw error
         }
 
-        return new Token
+        return new StringLiteralNode()
         {
             FileInfo = _sourceFile.FileInfo,
             Text = token,
             Line = _currentLine,
-            Type = TokenType.StringLiteral
         };
     }
 
-    private Token ReadIdentifierToken(char firstCharacter)
+    private TokenNode ReadIdentifierToken(char firstCharacter)
     {
         var token = firstCharacter.ToString();
         
@@ -134,39 +133,26 @@ public class Parser
         {
             token += _sourceFile.ReadChar();
         }
-
-        // if (token is "true" or "false")
-        // {
-        //     return new()
-        //     {
-        //         FileInfo = _sourceFile.FileInfo,
-        //         Text = token,
-        //         Line = _currentLine,
-        //         Type = TokenType.Boolean
-        //     };
-        // }
         
         if (token.StartsWith('&'))
         {
-            return new()
+            return new RestIdentifierNode()
             {
                 FileInfo = _sourceFile.FileInfo,
-                Text = token,
+                Text = token[1..],
                 Line = _currentLine,
-                Type = TokenType.RestIdentifier
             };
         }
         
-        return new()
+        return new IdentifierNode()
         {
             FileInfo = _sourceFile.FileInfo,
             Text = token,
             Line = _currentLine,
-            Type = TokenType.Identifier
         };
     }
 
-    private Token ReadNumberToken(char firstCharacter)
+    private TokenNode ReadNumberToken(char firstCharacter)
     {
         var token = firstCharacter.ToString();
         var c = '\0';
@@ -188,23 +174,11 @@ public class Parser
             token += c;
         }
 
-        if (foundPoint)
-        {
-            return new Token
-            {
-                FileInfo = _sourceFile.FileInfo,
-                Text = token,
-                Line = _currentLine,
-                Type = TokenType.Decimal
-            };
-        }
-        
-        return new Token
+        return new NumberLiteralNode()
         {
             FileInfo = _sourceFile.FileInfo,
             Text = token,
             Line = _currentLine,
-            Type = TokenType.Integer
         };
     }
 

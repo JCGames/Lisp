@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lisp", "Lisp\Lisp.csproj", "{8C4B8A96-6598-40DB-A7B0-D606223BBE7E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TurboTests", "TurboTests\TurboTests.csproj", "{34876539-40C0-4AA3-8966-AA34E8E6F125}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{8C4B8A96-6598-40DB-A7B0-D606223BBE7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8C4B8A96-6598-40DB-A7B0-D606223BBE7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8C4B8A96-6598-40DB-A7B0-D606223BBE7E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34876539-40C0-4AA3-8966-AA34E8E6F125}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34876539-40C0-4AA3-8966-AA34E8E6F125}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34876539-40C0-4AA3-8966-AA34E8E6F125}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34876539-40C0-4AA3-8966-AA34E8E6F125}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

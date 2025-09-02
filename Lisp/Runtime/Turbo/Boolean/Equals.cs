@@ -6,19 +6,17 @@ namespace Lisp.Turbo.Boolean;
 
 public class Equals : ITurboFunction
 {
-    private static readonly List<Token> ArgumentDeclaration =
+    private static readonly List<IdentifierNode> ArgumentDeclaration =
     [
         new()
         {
-            Type = TokenType.RestIdentifier,
             Text = "items",
-            Line = -1,
         },
     ];
 
-    public List<Token> Arguments => ArgumentDeclaration;
+    public List<IdentifierNode> Arguments => ArgumentDeclaration;
     
-    BaseLispValue ITurboFunction.Execute(List<Node> parameters, LispScope scope)
+    public BaseLispValue Execute(List<Node> parameters, LispScope scope)
     {
         if (parameters.Count < 2) throw new WrongArgumentCountException(Arguments, parameters.Count, 2);
         

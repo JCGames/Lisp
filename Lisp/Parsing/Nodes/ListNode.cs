@@ -1,6 +1,6 @@
 ﻿namespace Lisp.Parsing.Nodes;
 
-public class LispList : Node
+public class ListNode : Node
 {
     public bool IsQuoted { get; set; }
     public List<Node> Nodes { get; set; } = [];

@@ -7,19 +7,17 @@ namespace Lisp.Turbo;
 
 public class Import : ITurboFunction
 {
-    private static readonly List<Token> ArgumentDeclaration =
+    private static readonly List<IdentifierNode> ArgumentDeclaration =
     [
         new()
         {
             Text = "path",
-            Type = TokenType.Identifier,
-            Line = -1
         }
     ];
 
-    public List<Token> Arguments => ArgumentDeclaration;
+    public List<IdentifierNode> Arguments => ArgumentDeclaration;
     
-    BaseLispValue ITurboFunction.Execute(List<Node> parameters, LispScope scope)
+    public BaseLispValue Execute(List<Node> parameters, LispScope scope)
     {
         if (parameters.Count < 1) throw new WrongArgumentCountException(ArgumentDeclaration, parameters.Count, 1);
         
@@ -27,7 +25,7 @@ public class Import : ITurboFunction
         
         if (result is not LispStringValue str) throw new WrongArgumentTypeException("Import expects a string for the path.");
 
-        if (parameters[0] is not Token token) throw new WrongArgumentTypeException("Import only accepts a token as its argument.");
+        if (parameters[0] is not TokenNode token) throw new WrongArgumentTypeException("Import only accepts a token as its argument.");
         
         var path = Path.Join(token.FileInfo?.DirectoryName ?? Directory.GetCurrentDirectory(), token.Text);
         
