@@ -48,7 +48,15 @@ public class Parser
 
     private ListNode ReadTokens()
     {
-        var list = new ListNode();
+        var list = new ListNode
+        {
+            Location = new Location
+            {
+                SourceFile = _sourceFile,
+                Line = _sourceFile.CurrentLine,
+                Position = _sourceFile.CurrentPosition
+            }
+        };
 
         var c = '\0';
             

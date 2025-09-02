@@ -67,6 +67,6 @@ public class SourceFile
 
     public (int start, int end) GetStartAndEndOfLine(int line)
     {
-        return (_lineStarts[line - 1], line < _lineStarts.Count ? _lineStarts[line] : _lineStarts[^1]);
+        return (_lineStarts[line - 1], line < _lineStarts.Count ? _lineStarts[line] : Text.Length);
     }
 }

@@ -6,5 +6,4 @@
 ; we want windowing graphics library
 ; *     we want reactivity
 
-(print "Hello, world!")
-(print x)
+fdsaf

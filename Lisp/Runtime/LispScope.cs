@@ -39,7 +39,7 @@ public class LispScope
         return _parent ?? throw new InvalidOperationException("Cannot pop scope.");
     }
 
-    public BaseLispValue Read(string identifier)
+    public BaseLispValue? Read(string identifier)
     {
         var scope = this;
         LispValue? value;
@@ -53,8 +53,6 @@ public class LispScope
         {
             _global._scope.TryGetValue(identifier, out value);
         }
-        
-        if (value is null) throw Report.Error(new UndefinedIdentifierReportMessage(identifier));
         
         return value;
     }

@@ -25,7 +25,7 @@ public static class Runner
     public static BaseLispValue EvaluateNode(Node node, LispScope scope) => node switch
     {
         ListNode list => ExecuteList(list, scope),
-        IdentifierNode identifier => scope.Read(identifier.Text),
+        IdentifierNode identifier => scope.Read(identifier.Text) ?? throw Report.Error($"{identifier.Text} is undefined.", node.Location),
         NumberLiteralNode number => new LispNumberValue(number.Value),
         StringLiteralNode stringLiteral => new LispStringValue(stringLiteral.Text),
         _ => throw new NotImplementedException("Unknown token type.")
