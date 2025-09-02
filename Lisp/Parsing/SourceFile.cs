@@ -1,4 +1,4 @@
-﻿namespace Lisp;
+﻿namespace Lisp.Parsing;
 
 public class SourceFile
 {

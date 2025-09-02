@@ -1,4 +1,4 @@
-﻿namespace Lisp.Nodes;
+﻿namespace Lisp.Parsing.Nodes;
 
 // ; fadsf
 

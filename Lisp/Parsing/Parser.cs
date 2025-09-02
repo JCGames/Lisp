@@ -1,6 +1,6 @@
-﻿using Lisp.Nodes;
+﻿using Lisp.Parsing.Nodes;
 
-namespace Lisp;
+namespace Lisp.Parsing;
 
 public class Parser
 {

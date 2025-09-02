@@ -1,4 +1,5 @@
 ﻿using Lisp;
+using Lisp.Parsing;
 
 var standardLibrary = new SourceFile(new FileInfo("Runtime/StandardLibrary/preamble.lisp"));
 var sourceFile = new SourceFile(new FileInfo("main.txt"));
@@ -8,5 +9,10 @@ var parser = new Parser(sourceFile);
 
 var standardLibraryList = parserStandardLibrary.Parse();
 var list = parser.Parse();
+
+foreach (var lispList in list)
+{
+    lispList.Print("");
+}
 
 Runner.Run([..standardLibraryList, ..list]);
