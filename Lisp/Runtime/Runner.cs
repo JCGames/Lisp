@@ -24,27 +24,21 @@ public static class Runner
     public static BaseLispValue EvaluateNode(Node node, LispScope scope) => node switch
     {
         ListNode list => ExecuteList(list, scope),
-        TokenNode token => token.Type switch
-        {
-            TokenType.Identifier => scope.Read(token.Text),
-            TokenType.Decimal => new LispNumberValue(decimal.Parse(token.Text.Replace(",", ""))),
-            TokenType.Integer => new LispNumberValue(int.Parse(token.Text.Replace(",", ""))),
-            TokenType.StringLiteral => new LispStringValue(token.Text),
-            // TokenType.Boolean => new LispBooleanValue(bool.Parse(token.Text)),
-            _ => throw new NotImplementedException("Unknown token type."),
-        },
-        _ => throw new NotImplementedException("Unknown node type."),
+        IdentifierNode identifier => scope.Read(identifier.Text),
+        NumberLiteralNode number => new LispNumberValue(number.Value),
+        StringLiteralNode stringLiteral => scope.Read(stringLiteral.Text),
+        _ => throw new NotImplementedException("Unknown token type."),
     };
 
-    private static BaseLispValue ExecuteList(ListNode list, LispScope scope)
+    private static BaseLispValue ExecuteList(ListNode listNode, LispScope scope)
     {
-        if (list.Nodes.Count == 0) throw new InvalidOperationException("Cannot execute an empty list.");
+        if (listNode.Nodes.Count == 0) throw new InvalidOperationException("Cannot execute an empty list.");
 
-        var function = EvaluateNode(list.Nodes[0], scope);
+        var function = EvaluateNode(listNode.Nodes[0], scope);
 
         if (function is not IExecutableLispValue executable) throw new NotAFunctionException();
         
-        return executable.Execute(list.Nodes[1..], scope);
+        return executable.Execute(listNode.Nodes[1..], scope);
     }
     
     private static void InitializeGlobalScope(LispScope scope)

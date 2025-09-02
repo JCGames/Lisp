@@ -1,3 +1,4 @@
+using Lisp.Diagnostics;
 using Lisp.Exceptions;
 using Lisp.Parsing.Nodes;
 using Lisp.Types;
@@ -6,19 +7,18 @@ namespace Lisp.Turbo;
 
 public class Print : ITurboFunction
 {
-    private static readonly List<TokenNode> ArgumentDeclaration =
+    private static readonly List<IdentifierNode> ArgumentDeclaration =
     [
         new()
         {
-            Type = TokenType.Identifier,
             Text = "item",
-            Line = -1,
+            Location = Location.None
         },
     ];
 
-    public List<TokenNode> Arguments => ArgumentDeclaration;
+    public List<IdentifierNode> Arguments => ArgumentDeclaration;
     
-    BaseLispValue ITurboFunction.Execute(List<Node> parameters, LispScope scope)
+    public BaseLispValue Execute(List<Node> parameters, LispScope scope)
     {
         if (parameters.Count != 1) throw new WrongArgumentCountException(Arguments, parameters.Count);
         

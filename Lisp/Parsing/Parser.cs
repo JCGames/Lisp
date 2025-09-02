@@ -6,7 +6,6 @@ namespace Lisp.Parsing;
 public class Parser
 {
     private readonly SourceFile _sourceFile;
-    private int _currentLine = 1;
     
     public Parser(SourceFile sourceFile)
     {
@@ -15,33 +14,36 @@ public class Parser
     
     public List<ListNode> Parse()
     {
-        var listNode = new List<ListNode>();
+        var list = new List<ListNode>();
         
-        // read the entire file
         while (!_sourceFile.EndOfFile)
         {
             var c = _sourceFile.ReadChar();
-            
+
             if (char.IsWhiteSpace(c)) continue;
+            if (c is ';') SkipComment();
+            
             if (c is not '(')
             {
                 var location = new Location
                 {
-                    SourceFile = _sourceFile,
-                    Line = _currentLine,
-                    Position = _sourceFile.CurrentPosition
+                    Line = _sourceFile.CurrentLine,
+                    Position = _sourceFile.CurrentPosition,
+                    SourceFile = _sourceFile
                 };
                 
-                Report.Error("This token was not a list.", location);
+                Report.Error("A list must start with an open parenthesis.", location);
             }
+
+            list.Add(ReadTokens());
         }
 
-        return listNode;
+        return list;
     }
 
     private ListNode ReadTokens()
     {
-        var listNode = new ListNode();
+        var list = new ListNode();
 
         var c = '\0';
             
@@ -54,11 +56,9 @@ public class Parser
             if (c is '\r' && _sourceFile.PeekChar() is '\n')
             {
                 _sourceFile.ReadChar();
-                _currentLine++;
             }
             else if (c is '\r' or '\n')
             {
-                _currentLine++;
             }
             else if (c is ';')
             {
@@ -70,15 +70,15 @@ public class Parser
                 
                 var newList = ReadTokens();
                 newList.IsQuoted = true;
-                listNode.Nodes.Add(newList);
+                list.Nodes.Add(newList);
             }
             else if (c is '"')
             {
-                listNode.Nodes.Add(ReadStringLiteralToken(c));
+                list.Nodes.Add(ReadStringLiteralToken(c));
             }
             else if (char.IsDigit(c) || (c is '.' && char.IsDigit(_sourceFile.PeekChar())))
             {
-                listNode.Nodes.Add(ReadNumberToken(c));
+                list.Nodes.Add(ReadNumberToken(c));
             }
             else if (char.IsWhiteSpace(c))
             {
@@ -86,11 +86,11 @@ public class Parser
             }
             else if (c is '(')
             {
-                listNode.Nodes.Add(ReadTokens());
+                list.Nodes.Add(ReadTokens());
             }
             else
             {
-                listNode.Nodes.Add(ReadIdentifierToken(c));
+                list.Nodes.Add(ReadIdentifierToken(c));
             }
         }
 
@@ -99,7 +99,7 @@ public class Parser
             // throw error here
         } 
         
-        return listNode;
+        return list;
     }
     
     private TokenNode ReadStringLiteralToken(char startQuote)
@@ -121,12 +121,15 @@ public class Parser
             // throw error
         }
 
-        return new TokenNode
+        return new StringLiteralNode
         {
-            FileInfo = _sourceFile.FileInfo,
-            Text = token,
-            Line = _currentLine,
-            Type = TokenType.StringLiteral
+            Location = new Location
+            {
+                Line = _sourceFile.CurrentLine,
+                Position = _sourceFile.CurrentPosition,
+                SourceFile = _sourceFile
+            },
+            Text = token
         };
     }
 
@@ -141,21 +144,27 @@ public class Parser
         
         if (token.StartsWith('&'))
         {
-            return new()
+            return new RestIdentifierNode()
             {
-                FileInfo = _sourceFile.FileInfo,
-                Text = token,
-                Line = _currentLine,
-                Type = TokenType.RestIdentifier
+                Location = new Location
+                {
+                    Line = _sourceFile.CurrentLine,
+                    Position = _sourceFile.CurrentPosition,
+                    SourceFile = _sourceFile
+                },
+                Text = token[1..]
             };
         }
         
-        return new()
+        return new IdentifierNode
         {
-            FileInfo = _sourceFile.FileInfo,
-            Text = token,
-            Line = _currentLine,
-            Type = TokenType.Identifier
+            Location = new Location
+            {
+                Line = _sourceFile.CurrentLine,
+                Position = _sourceFile.CurrentPosition,
+                SourceFile = _sourceFile
+            },
+            Text = token
         };
     }
 
@@ -180,23 +189,15 @@ public class Parser
             token += c;
         }
 
-        if (foundPoint)
+        return new NumberLiteralNode
         {
-            return new TokenNode
+            Location = new Location
             {
-                FileInfo = _sourceFile.FileInfo,
-                Text = token,
-                Line = _currentLine,
-                Type = TokenType.Decimal
-            };
-        }
-        
-        return new TokenNode
-        {
-            FileInfo = _sourceFile.FileInfo,
-            Text = token,
-            Line = _currentLine,
-            Type = TokenType.Integer
+                Line = _sourceFile.CurrentLine,
+                Position = _sourceFile.CurrentPosition,
+                SourceFile = _sourceFile
+            },
+            Text = token
         };
     }
 
@@ -217,13 +218,11 @@ public class Parser
             if (c is '\r' && _sourceFile.PeekChar() is '\n')
             {
                 _sourceFile.ReadChar();
-                _currentLine++;
                 break;
             }
             
             if (c is '\n' or '\r')
             {
-                _currentLine++;
                 break;
             }
         }

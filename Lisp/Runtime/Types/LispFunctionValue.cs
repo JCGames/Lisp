@@ -5,10 +5,10 @@ namespace Lisp.Types;
 
 public class LispFunctionValue : LispValue, IExecutableLispValue
 {
-    public List<TokenNode> Arguments { get; }
+    public List<IdentifierNode> Arguments { get; }
     public List<ListNode> Definition { get; }
 
-    public LispFunctionValue(List<TokenNode> arguments, List<ListNode> definition)
+    public LispFunctionValue(List<IdentifierNode> arguments, List<ListNode> definition)
     {
         Arguments = arguments ?? throw new ArgumentNullException(nameof(arguments));
         Definition = definition ?? throw new ArgumentNullException(nameof(definition));

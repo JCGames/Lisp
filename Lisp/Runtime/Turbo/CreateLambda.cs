@@ -1,3 +1,4 @@
+using Lisp.Diagnostics;
 using Lisp.Exceptions;
 using Lisp.Parsing.Nodes;
 using Lisp.Types;
@@ -6,32 +7,29 @@ namespace Lisp.Turbo;
 
 public class CreateLambda : ITurboFunction
 {
-    private static readonly List<TokenNode> ArgumentDeclaration =
+    private static readonly List<IdentifierNode> ArgumentDeclaration =
     [
         new()
         {
-            Type = TokenType.Identifier,
             Text = "arguments",
-            Line = -1,
+            Location = Location.None
         },
         new()
         {
-            Type = TokenType.RestIdentifier,
             Text = "body",
-            Line = -1,
+            Location = Location.None
         }
     ];
 
-    public List<TokenNode> Arguments => ArgumentDeclaration;
+    public List<IdentifierNode> Arguments => ArgumentDeclaration;
     
-    BaseLispValue ITurboFunction.Execute(List<Node> parameters, LispScope scope)
+    public BaseLispValue Execute(List<Node> parameters, LispScope scope)
     {
         if (parameters.Count < 2) throw new WrongArgumentCountException(ArgumentDeclaration, parameters.Count);
         if (parameters[0] is not ListNode argNodeList) throw new WrongArgumentTypeException("Expected the first argument to be a list.");
         
         var argList = argNodeList.Nodes
-            .OfType<TokenNode>()
-            .Where(t => t.Type == TokenType.Identifier)
+            .OfType<IdentifierNode>()
             .ToList();
         
         if (argList.Count != argNodeList.Nodes.Count) throw new InvalidFunctionException("Expected all parameters to be identifiers.");

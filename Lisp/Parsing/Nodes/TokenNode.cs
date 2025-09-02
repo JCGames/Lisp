@@ -1,30 +1,16 @@
-﻿namespace Lisp.Parsing.Nodes;
+﻿using Lisp.Diagnostics;
 
-public enum TokenType
-{
-    Decimal,
-    Integer,
-    StringLiteral,
-    Identifier,
-    RestIdentifier
-}
+namespace Lisp.Parsing.Nodes;
 
-public class TokenNode : Node
+
+public abstract class TokenNode : Node
 {
-    public required TokenType Type { get; init; }
-    public required string Text { get; init; }
-    
-    public FileInfo? FileInfo { get; init; }
-    public int? Line { get; init; }
+    public required string Text { get; set; }
+    public required Location Location { get; set; }
     
     public override void Print(string indent, TextWriter? writer = null)
     {
         writer ??= Console.Out;
-        var text = Type switch
-        {
-            TokenType.RestIdentifier => $"&{Text}",
-            _ => Text,
-        };
-        writer.WriteLine($"{indent}[{Type}, |{text}|, {Line}]");
+        writer.WriteLine($"{indent}[{GetType().Name}, |{Text}|, {Location?.Line}]");
     }
 }

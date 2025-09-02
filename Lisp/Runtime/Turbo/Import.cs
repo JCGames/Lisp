@@ -1,3 +1,4 @@
+using Lisp.Diagnostics;
 using Lisp.Exceptions;
 using Lisp.Parsing;
 using Lisp.Parsing.Nodes;
@@ -7,19 +8,18 @@ namespace Lisp.Turbo;
 
 public class Import : ITurboFunction
 {
-    private static readonly List<TokenNode> ArgumentDeclaration =
+    private static readonly List<IdentifierNode> ArgumentDeclaration =
     [
         new()
         {
             Text = "path",
-            Type = TokenType.Identifier,
-            Line = -1
+            Location = Location.None
         }
     ];
 
-    public List<TokenNode> Arguments => ArgumentDeclaration;
+    public List<IdentifierNode> Arguments => ArgumentDeclaration;
     
-    BaseLispValue ITurboFunction.Execute(List<Node> parameters, LispScope scope)
+    public BaseLispValue Execute(List<Node> parameters, LispScope scope)
     {
         if (parameters.Count < 1) throw new WrongArgumentCountException(ArgumentDeclaration, parameters.Count, 1);
         
@@ -29,7 +29,7 @@ public class Import : ITurboFunction
 
         if (parameters[0] is not TokenNode token) throw new WrongArgumentTypeException("Import only accepts a token as its argument.");
         
-        var path = Path.Join(token.FileInfo?.DirectoryName ?? Directory.GetCurrentDirectory(), token.Text);
+        var path = Path.Join(token.Location.SourceFile?.FileInfo?.DirectoryName ?? Directory.GetCurrentDirectory(), token.Text);
         
         var sourceFile = new SourceFile(new FileInfo(path));
         var parser = new Parser(sourceFile);

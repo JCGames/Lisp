@@ -5,7 +5,9 @@ namespace Lisp.Types;
 
 public class LispTurboFunctionValue : LispValue, IExecutableLispValue
 {
+    
     public ITurboFunction Implementation { get; }
+    public List<IdentifierNode> Arguments => Implementation.Arguments;
 
     public LispTurboFunctionValue(ITurboFunction implementation)
     {
