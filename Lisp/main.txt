@@ -1,16 +1,15 @@
 ﻿; empty window
 (gui/window)
 
-; we want dot accessors
+; we want (better) exception handling
 ; we want labeled parameters
 ; we want varadic args
 ; we want structures (dictionaries)
+; we want dot accessors
 ; we want windowing graphics library
 ; *     we want reactivity
 
 (lambda (h j k title: a content: c &b)
-
-
 
 ; Create a window and get a reference to it (does not show it)
 (let handle (gui/window
@@ -27,6 +26,7 @@
     
 (set struct yellow "new value")
 (print struct.yellow)
+
 
 (get (get struct yello) value)
 (print struct.yellow.value)
