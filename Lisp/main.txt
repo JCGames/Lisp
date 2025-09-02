@@ -1,45 +1,8 @@
-﻿; empty window
-(gui/window)
-
-; we want dot accessors
+﻿; we want dot accessors
 ; we want labeled parameters
 ; we want varadic args
 ; we want structures (dictionaries)
 ; we want windowing graphics library
 ; *     we want reactivity
 
-(lambda (h j k title: a content: c &b)
-
-
-
-; Create a window and get a reference to it (does not show it)
-(let handle (gui/window
-    title: "title"
-    icon: "some_path.png"
-    minWidth: 100
-    startingWidth: 300))
-    
-(def struct {
-    yellow: {
-      color: "yellow"
-      value: 255}
-    red: "red"})
-    
-(set struct yellow "new value")
-(print struct.yellow)
-
-(get (get struct yello) value)
-(print struct.yellow.value)
-
-(gui/window-show handle)
-(gui/window-hide handle)
-(gui/draw-rect handle 0 0 10 10 color)
-
-
-(gui/draw-ui handle 
-    (gui/panel width: 100% height: 80%
-       (gui/text "some text"))
-    (gui/panel width: 100% height: 20%
-       (gui/panel width: 50% height: 100%
-         (gui/button "ok")
-         (gui/button "cancel")))
+(print "Hello, world!")
