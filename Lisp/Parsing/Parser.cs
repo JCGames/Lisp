@@ -131,6 +131,12 @@ public class Parser
         {
             c = _sourceFile.ReadChar();
 
+            if ((c is '\r' && _sourceFile.PeekChar() is '\n')
+                || c is '\r' or '\n')
+            {
+                Report.Error("Missing closing quote.", stringLiteralLocation);
+            }
+
             if (c == startQuote) break;
             
             token += c;
