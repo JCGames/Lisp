@@ -1,0 +1,70 @@
+using Lisp.Exceptions;
+using Lisp.Nodes;
+
+namespace Lisp.Types;
+
+public class LispFunctionValue : LispValue, IExecutableLispValue
+{
+    public List<Token> Arguments { get; }
+    public List<LispList> Definition { get; }
+
+    public LispFunctionValue(List<Token> arguments, List<LispList> definition)
+    {
+        Arguments = arguments ?? throw new ArgumentNullException(nameof(arguments));
+        Definition = definition ?? throw new ArgumentNullException(nameof(definition));
+        if (Definition.Count == 0) throw new InvalidFunctionException("A function must contain a body!");
+    }
+
+
+    public override string ToString()
+    {
+        var writer = new StringWriter();
+        
+        writer.WriteLine("Arguments:");
+        // Arguments.Print("\t", writer);
+        writer.WriteLine("Definition:");
+        foreach (LispList list in Definition)
+        {
+            writer.Write("-");
+            list.Print("\t", writer);
+        }
+        return writer.ToString();
+    }
+
+    public BaseLispValue Execute(List<Node> parameters, LispScope scope)
+    {
+        if (parameters.Count != Arguments.Count) throw new WrongArgumentCountException(Arguments, parameters.Count);
+
+        scope = scope.PushScope();
+        for (var i = 0; i < Arguments.Count; i++)
+        {
+            var name = Arguments[i].Text;
+            var value = Runner.EvaluateNode(parameters[i], scope);
+            if (value is not LispValue lispValue) throw new WrongArgumentTypeException($"{value} is not a valid value.");
+
+            scope.UpdateScope(name, lispValue);
+        }
+
+        BaseLispValue result = null!;
+        foreach (var list in Definition)
+        {
+            result = Runner.EvaluateNode(list, scope);    
+        }
+        
+        return result;
+    }
+
+    protected override bool Equals(BaseLispValue other)
+    {
+        if (other is not LispFunctionValue function) return false;
+        if (!function.Arguments.Equals(Arguments)) return false;
+        if (!function.Definition.Equals(Definition)) return false;
+        
+        return true;
+    }
+
+    public override int GetHashCode()
+    {
+        return Arguments.GetHashCode() ^ Definition.GetHashCode();
+    }
+}

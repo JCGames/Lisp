@@ -1,0 +1,8 @@
+(def > Turbo.GreaterThan)
+(def >= Turbo.GreaterThanOrEqualTo)
+(def < Turbo.LessThan)
+(def <= Turbo.LessThanOrEqualTo)
+(def == Turbo.Equals)
+(def and Turbo.And)
+(def or Turbo.Or)
+(def not Turbo.Not)

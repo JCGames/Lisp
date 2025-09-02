@@ -20,6 +20,12 @@ public class Parser
         {
             var c = _sourceFile.ReadChar();
 
+            if (c is ';')
+            {
+                SkipComment();
+                continue;
+            }
+
             if (c is '(')
             {
                 list.Add(ReadTokens());
@@ -49,6 +55,10 @@ public class Parser
             else if (c is '\r' or '\n')
             {
                 _currentLine++;
+            }
+            else if (c is ';')
+            {
+                SkipComment();
             }
             else if (c is '\'' && _sourceFile.PeekChar() is '(')
             {
@@ -124,8 +134,30 @@ public class Parser
         {
             token += _sourceFile.ReadChar();
         }
+
+        // if (token is "true" or "false")
+        // {
+        //     return new()
+        //     {
+        //         FileInfo = _sourceFile.FileInfo,
+        //         Text = token,
+        //         Line = _currentLine,
+        //         Type = TokenType.Boolean
+        //     };
+        // }
         
-        return new Token
+        if (token.StartsWith('&'))
+        {
+            return new()
+            {
+                FileInfo = _sourceFile.FileInfo,
+                Text = token,
+                Line = _currentLine,
+                Type = TokenType.RestIdentifier
+            };
+        }
+        
+        return new()
         {
             FileInfo = _sourceFile.FileInfo,
             Text = token,
@@ -181,6 +213,29 @@ public class Parser
         while (!_sourceFile.EndOfFile && char.IsWhiteSpace(_sourceFile.PeekChar()))
         {
             _sourceFile.ReadChar();
+        }
+    }
+
+    private void SkipComment()
+    {
+        var c = '\0';
+        
+        while (!_sourceFile.EndOfFile)
+        {
+            c = _sourceFile.ReadChar();
+
+            if (c is '\r' && _sourceFile.PeekChar() is '\n')
+            {
+                _sourceFile.ReadChar();
+                _currentLine++;
+                break;
+            }
+            
+            if (c is '\n' or '\r')
+            {
+                _currentLine++;
+                break;
+            }
         }
     }
 }

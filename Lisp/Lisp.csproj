@@ -11,6 +11,22 @@
       <None Update="main.txt">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+
+      <None Update="Runtime\StandardLibrary\preamble.lisp">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+
+      <None Update="Runtime\StandardLibrary\boolean.lisp">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+
+      <None Update="Runtime\StandardLibrary\math.lisp">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+
+      <None Update="lib.lisp">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>
