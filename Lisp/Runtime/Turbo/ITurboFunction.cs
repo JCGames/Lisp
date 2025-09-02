@@ -9,7 +9,7 @@ namespace Lisp.Turbo;
 /// </summary>
 public interface ITurboFunction
 {
-    public List<Token> Arguments { get; }
+    public List<TokenNode> Arguments { get; }
 
     /// <summary>
     /// Takes a list of pre-evaluated nodes.

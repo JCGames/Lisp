@@ -1,4 +1,5 @@
-﻿using Lisp.Parsing.Nodes;
+﻿using Lisp.Diagnostics;
+using Lisp.Parsing.Nodes;
 
 namespace Lisp.Parsing;
 
@@ -12,32 +13,35 @@ public class Parser
         _sourceFile = sourceFile;
     }
     
-    public List<LispList> Parse()
+    public List<ListNode> Parse()
     {
-        var list = new List<LispList>();
+        var listNode = new List<ListNode>();
         
+        // read the entire file
         while (!_sourceFile.EndOfFile)
         {
             var c = _sourceFile.ReadChar();
-
-            if (c is ';')
+            
+            if (char.IsWhiteSpace(c)) continue;
+            if (c is not '(')
             {
-                SkipComment();
-                continue;
-            }
-
-            if (c is '(')
-            {
-                list.Add(ReadTokens());
+                var location = new Location
+                {
+                    SourceFile = _sourceFile,
+                    Line = _currentLine,
+                    Position = _sourceFile.CurrentPosition
+                };
+                
+                Report.Error("This token was not a list.", location);
             }
         }
 
-        return list;
+        return listNode;
     }
 
-    private LispList ReadTokens()
+    private ListNode ReadTokens()
     {
-        var list = new LispList();
+        var listNode = new ListNode();
 
         var c = '\0';
             
@@ -66,15 +70,15 @@ public class Parser
                 
                 var newList = ReadTokens();
                 newList.IsQuoted = true;
-                list.Nodes.Add(newList);
+                listNode.Nodes.Add(newList);
             }
             else if (c is '"')
             {
-                list.Nodes.Add(ReadStringLiteralToken(c));
+                listNode.Nodes.Add(ReadStringLiteralToken(c));
             }
             else if (char.IsDigit(c) || (c is '.' && char.IsDigit(_sourceFile.PeekChar())))
             {
-                list.Nodes.Add(ReadNumberToken(c));
+                listNode.Nodes.Add(ReadNumberToken(c));
             }
             else if (char.IsWhiteSpace(c))
             {
@@ -82,11 +86,11 @@ public class Parser
             }
             else if (c is '(')
             {
-                list.Nodes.Add(ReadTokens());
+                listNode.Nodes.Add(ReadTokens());
             }
             else
             {
-                list.Nodes.Add(ReadIdentifierToken(c));
+                listNode.Nodes.Add(ReadIdentifierToken(c));
             }
         }
 
@@ -95,10 +99,10 @@ public class Parser
             // throw error here
         } 
         
-        return list;
+        return listNode;
     }
     
-    private Token ReadStringLiteralToken(char startQuote)
+    private TokenNode ReadStringLiteralToken(char startQuote)
     {
         var token = string.Empty;
         var c = '\0';
@@ -117,7 +121,7 @@ public class Parser
             // throw error
         }
 
-        return new Token
+        return new TokenNode
         {
             FileInfo = _sourceFile.FileInfo,
             Text = token,
@@ -126,7 +130,7 @@ public class Parser
         };
     }
 
-    private Token ReadIdentifierToken(char firstCharacter)
+    private TokenNode ReadIdentifierToken(char firstCharacter)
     {
         var token = firstCharacter.ToString();
         
@@ -134,17 +138,6 @@ public class Parser
         {
             token += _sourceFile.ReadChar();
         }
-
-        // if (token is "true" or "false")
-        // {
-        //     return new()
-        //     {
-        //         FileInfo = _sourceFile.FileInfo,
-        //         Text = token,
-        //         Line = _currentLine,
-        //         Type = TokenType.Boolean
-        //     };
-        // }
         
         if (token.StartsWith('&'))
         {
@@ -166,15 +159,14 @@ public class Parser
         };
     }
 
-    private Token ReadNumberToken(char firstCharacter)
+    private TokenNode ReadNumberToken(char firstCharacter)
     {
         var token = firstCharacter.ToString();
-        var c = '\0';
         var foundPoint = false;
         
         while (!_sourceFile.EndOfFile && char.IsNumber(_sourceFile.PeekChar()) || _sourceFile.PeekChar() is '.' or ',')
         {
-            c = _sourceFile.ReadChar();
+            var c = _sourceFile.ReadChar();
             
             if (c is '.' && !foundPoint)
             {
@@ -190,7 +182,7 @@ public class Parser
 
         if (foundPoint)
         {
-            return new Token
+            return new TokenNode
             {
                 FileInfo = _sourceFile.FileInfo,
                 Text = token,
@@ -199,7 +191,7 @@ public class Parser
             };
         }
         
-        return new Token
+        return new TokenNode
         {
             FileInfo = _sourceFile.FileInfo,
             Text = token,
@@ -218,11 +210,9 @@ public class Parser
 
     private void SkipComment()
     {
-        var c = '\0';
-        
         while (!_sourceFile.EndOfFile)
         {
-            c = _sourceFile.ReadChar();
+            var c = _sourceFile.ReadChar();
 
             if (c is '\r' && _sourceFile.PeekChar() is '\n')
             {

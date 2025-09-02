@@ -5,10 +5,10 @@ namespace Lisp.Types;
 
 public class LispFunctionValue : LispValue, IExecutableLispValue
 {
-    public List<Token> Arguments { get; }
-    public List<LispList> Definition { get; }
+    public List<TokenNode> Arguments { get; }
+    public List<ListNode> Definition { get; }
 
-    public LispFunctionValue(List<Token> arguments, List<LispList> definition)
+    public LispFunctionValue(List<TokenNode> arguments, List<ListNode> definition)
     {
         Arguments = arguments ?? throw new ArgumentNullException(nameof(arguments));
         Definition = definition ?? throw new ArgumentNullException(nameof(definition));
@@ -23,7 +23,7 @@ public class LispFunctionValue : LispValue, IExecutableLispValue
         writer.WriteLine("Arguments:");
         // Arguments.Print("\t", writer);
         writer.WriteLine("Definition:");
-        foreach (LispList list in Definition)
+        foreach (ListNode list in Definition)
         {
             writer.Write("-");
             list.Print("\t", writer);

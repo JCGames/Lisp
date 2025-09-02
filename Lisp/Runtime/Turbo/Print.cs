@@ -6,7 +6,7 @@ namespace Lisp.Turbo;
 
 public class Print : ITurboFunction
 {
-    private static readonly List<Token> ArgumentDeclaration =
+    private static readonly List<TokenNode> ArgumentDeclaration =
     [
         new()
         {
@@ -16,7 +16,7 @@ public class Print : ITurboFunction
         },
     ];
 
-    public List<Token> Arguments => ArgumentDeclaration;
+    public List<TokenNode> Arguments => ArgumentDeclaration;
     
     BaseLispValue ITurboFunction.Execute(List<Node> parameters, LispScope scope)
     {

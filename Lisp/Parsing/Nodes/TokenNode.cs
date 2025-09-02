@@ -1,23 +1,21 @@
 ﻿namespace Lisp.Parsing.Nodes;
 
-// ; fadsf
-
 public enum TokenType
 {
     Decimal,
     Integer,
     StringLiteral,
-    Boolean,
     Identifier,
-    RestIdentifier,
+    RestIdentifier
 }
 
-public class Token : Node
+public class TokenNode : Node
 {
-    public required TokenType Type { get; set; }
-    public required string Text { get; set; }
-    public FileInfo? FileInfo { get; set; }
-    public int? Line { get; set; }
+    public required TokenType Type { get; init; }
+    public required string Text { get; init; }
+    
+    public FileInfo? FileInfo { get; init; }
+    public int? Line { get; init; }
     
     public override void Print(string indent, TextWriter? writer = null)
     {

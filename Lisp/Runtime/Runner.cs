@@ -10,7 +10,7 @@ namespace Lisp;
 
 public static class Runner
 {
-    public static void Run(List<LispList> list)
+    public static void Run(List<ListNode> list)
     {
         var scope = new LispScope();
         InitializeGlobalScope(scope);
@@ -23,8 +23,8 @@ public static class Runner
 
     public static BaseLispValue EvaluateNode(Node node, LispScope scope) => node switch
     {
-        LispList list => ExecuteList(list, scope),
-        Token token => token.Type switch
+        ListNode list => ExecuteList(list, scope),
+        TokenNode token => token.Type switch
         {
             TokenType.Identifier => scope.Read(token.Text),
             TokenType.Decimal => new LispNumberValue(decimal.Parse(token.Text.Replace(",", ""))),
@@ -36,7 +36,7 @@ public static class Runner
         _ => throw new NotImplementedException("Unknown node type."),
     };
 
-    private static BaseLispValue ExecuteList(LispList list, LispScope scope)
+    private static BaseLispValue ExecuteList(ListNode list, LispScope scope)
     {
         if (list.Nodes.Count == 0) throw new InvalidOperationException("Cannot execute an empty list.");
 
