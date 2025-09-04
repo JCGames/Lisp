@@ -126,7 +126,7 @@ public class Parser
         }
         else if (c is '{')
         {
-            ReadStruct();
+            return ReadStruct();
         }
         else
         {
