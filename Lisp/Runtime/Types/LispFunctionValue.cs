@@ -66,6 +66,11 @@ public class LispFunctionValue : LispValue, IExecutableLispValue
 
     public override int GetHashCode()
     {
-        return Arguments.GetHashCode() ^ Definition.GetHashCode();
+        var hash = new HashCode();
+        
+        hash.Add(Arguments);
+        hash.Add(Definition);
+        
+        return hash.ToHashCode();
     }
 }

@@ -30,6 +30,7 @@ public static class Runner
         IdentifierNode identifier => scope.Read(identifier.Text) ?? throw Report.Error($"{identifier.Text} is undefined.", node.Location),
         NumberLiteralNode number => new LispNumberValue(number.Value),
         StringLiteralNode stringLiteral => new LispStringValue(stringLiteral.Text),
+        StructNode structNode => new LispStructValue(structNode.Struct, scope),
         _ => throw new NotImplementedException("Unknown token type.")
     };
 
