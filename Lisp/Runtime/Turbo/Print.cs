@@ -9,9 +9,9 @@ public class Print : ITurboFunction
 {
     private static readonly List<IdentifierNode> ArgumentDeclaration =
     [
-        new()
+        new RestIdentifierNode()
         {
-            Text = "item",
+            Text = "items",
             Location = Location.None
         },
     ];
@@ -20,12 +20,14 @@ public class Print : ITurboFunction
     
     public BaseLispValue Execute(List<Node> parameters, LispScope scope)
     {
-        if (parameters.Count != 1) Report.Error(new WrongArgumentCountReportMessage(Arguments, parameters.Count));
+        foreach (var parameter in parameters)
+        {
+            var value = Runner.EvaluateNode(parameter, scope);
+            Runner.StdOut.Write(value);
+        }
         
-        var value = Runner.EvaluateNode(parameters[0], scope);
+        Runner.StdOut.WriteLine();
         
-        Runner.StdOut.WriteLine(value);
-        
-        return new LispVoidValue();
+        return LispVoidValue.Instance;
     }
 }

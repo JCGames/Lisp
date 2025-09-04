@@ -5,7 +5,38 @@
 ; we want windowing graphics library
 ; *     we want reactivity
 
-(let c { 
-    value: 2.2
-    value2: 2.2
-})
+;(let c { 
+;    value: 2.2
+;    value2: 2.2
+;})
+
+(def abs (lambda (x)
+    (if (< x 0)
+        (- x)
+        x)))
+                    
+(def square (lambda (x) (* x x)))
+    
+(def sqrt-iter (lambda (guess x)
+    (print "---- iter ----")
+    (print guess)
+    (print x)
+    (print)
+    (if (good-enough? guess x)
+        guess
+        (sqrt-iter (improve guess x) x))))
+        
+(def improve (lambda (guess x) (average guess (/ x guess))))
+
+(def average (lambda (x y)
+    (/ (+ x y) 2)))
+    
+(def good-enough? (lambda (guess x)
+    (< (abs (- (square guess) x)) 0.001)))
+
+(def sqrt (lambda (x)
+    (sqrt-iter 1.0 x)))
+
+(debug)
+
+(print (sqrt 9))

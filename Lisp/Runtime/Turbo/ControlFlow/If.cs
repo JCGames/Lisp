@@ -45,6 +45,6 @@ public class If : ITurboFunction
             return Runner.EvaluateNode(parameters[2], scope);
         }
 
-        return new LispVoidValue();
+        return LispVoidValue.Instance;
     }
 }

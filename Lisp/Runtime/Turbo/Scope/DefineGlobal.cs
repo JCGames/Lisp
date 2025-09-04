@@ -35,6 +35,6 @@ public class DefineGlobal : ITurboFunction
         
         scope.UpdateGlobalScope(identifierName, lispValue);
         
-        return new LispVoidValue();
+        return LispVoidValue.Instance;
     }
 }

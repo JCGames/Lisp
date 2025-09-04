@@ -33,6 +33,6 @@ public class Switch : ITurboFunction
             if (boolean.Value) return Runner.EvaluateNode(list.Nodes[1], scope);
         }
 
-        return new LispVoidValue();
+        return LispVoidValue.Instance;
     }
 }

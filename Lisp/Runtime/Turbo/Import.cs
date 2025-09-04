@@ -39,6 +39,6 @@ public class Import : ITurboFunction
             Runner.EvaluateNode(lispList, scope);
         }
         
-        return new LispVoidValue();
+        return LispVoidValue.Instance;
     }
 }
