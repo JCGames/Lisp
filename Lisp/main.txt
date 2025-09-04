@@ -5,29 +5,13 @@
 ; we want windowing graphics library
 ; *     we want reactivity
 
-(let doThis (lambda (x)
-    (switch
-        ((< x 0) (* x -1))
-        ((>= x 0) x))
-        (let doThat (lambda (x)
-            (switch
-                ((< x 0) (* x -1))
-                ((>= x 0) x))))))
-
-(print (doThis -10))
-(print (doThat -10))
-;(let c { 
-;    value: 2.2
-;    value2: 2.2
-;})
-
 (def abs (lambda (x)
-    (if (< x 0)
-        (- x)
-        x)))
-                    
+   (if (< x 0)
+       (- x)
+       x)))
+                   
 (def square (lambda (x) (* x x)))
-    
+   
 (def sqrt-iter (lambda (guess x)
     (print "---- iter ----")
     (print guess)

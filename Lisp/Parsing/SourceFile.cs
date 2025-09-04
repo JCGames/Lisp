@@ -16,6 +16,21 @@ public class SourceFile
     public SourceFile(string text)
     {
         Text = text;
+        
+        _lineStarts.Add(0);
+            
+        for (var i = 0; i < Text.Length; i++)
+        {
+            if (Text[i] is '\r' && i + 1 < Text.Length && Text[i + 1] is '\n')
+            {
+                i++;
+                _lineStarts.Add(i + 1);
+            }
+            else if (Text[i] is '\r' or '\n')
+            {
+                _lineStarts.Add(i);
+            }
+        }
     }
 
     public SourceFile(FileInfo fileInfo)
@@ -65,12 +80,15 @@ public class SourceFile
         return Text[CurrentPosition];
     }
 
-    public (int start, int end) GetStartAndEndOfLine(int line)
+    public (int start, int end)? GetStartAndEndOfLine(int line)
     {
-        if (line < 0 || line >= Text.Length || _lineStarts.Count == 0)
-        {
-            return (-1, -1);
-        }
-        return (_lineStarts[line - 1], line < _lineStarts.Count ? _lineStarts[line] : Text.Length);
+        if (Text.Length == 0 || _lineStarts.Count == 0) return null;
+        if (line - 1 < 0) return null;
+        if (line - 1 >= _lineStarts.Count) return null;
+
+        var start = _lineStarts[line - 1];
+        var end = line + 1 < _lineStarts.Count ? _lineStarts[line] : Text.Length; // Text.Length assumes another new line
+        
+        return (start, end);
     }
 }

@@ -15,6 +15,8 @@ public class DebugRepl : ITurboFunction
     public BaseLispValue Execute(List<Node> parameters, LispScope scope)
     {
         if (parameters.Count > 0) throw Report.Error(new WrongArgumentCountReportMessage(ArgumentDeclaration, parameters.Count));
+
+        Report.PreferThrownErrors = true;
         
         Runner.StdOut.WriteLine("Welcome to the interactive debugger. Your state is right where you left it.");
         Runner.StdOut.WriteLine("Currently, only one line of input at a time is allowed.");
@@ -22,28 +24,36 @@ public class DebugRepl : ITurboFunction
         var exit = false;
         while (!exit)
         {
-            Runner.StdOut.Write("> ");
-            var line = Runner.StdIn.ReadLine();
-            if (string.IsNullOrWhiteSpace(line))
+            try
             {
-                line = ":h";
-            }
-            if (line.StartsWith(":"))
-            {
-                exit = HandleReplCommand(line, scope);
-            }
-            
-            var parser = new Parser(new(line));
-            var command = parser.Parse();
-            BaseLispValue value = LispVoidValue.Instance;
-            foreach (var node in command)
-            {
-                value = Runner.EvaluateNode(node, scope);    
-            }
+                Runner.StdOut.Write("> ");
+                var line = Runner.StdIn.ReadLine();
+                if (string.IsNullOrWhiteSpace(line))
+                {
+                    line = ":h";
+                }
 
-            if (value is LispValue lispValue)
+                if (line.StartsWith(":"))
+                {
+                    exit = HandleReplCommand(line, scope);
+                }
+
+                var parser = new Parser(new(line));
+                var command = parser.Parse();
+                BaseLispValue value = LispVoidValue.Instance;
+                foreach (var node in command)
+                {
+                    value = Runner.EvaluateNode(node, scope);
+                }
+
+                if (value is LispValue lispValue)
+                {
+                    Runner.StdOut.WriteLine(lispValue);
+                }
+            }
+            catch (Exception)
             {
-                Runner.StdOut.WriteLine(lispValue);
+                // Console.WriteLine(ex.Message);
             }
         }
         

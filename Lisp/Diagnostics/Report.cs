@@ -22,34 +22,37 @@ public static class Report
         
         if (location?.SourceFile is not null)
         {
-            var (lineBeforeStart, lineBeforeEnd) = location.SourceFile.GetStartAndEndOfLine(location.Line - 1);
-            var (start, end) = location.SourceFile.GetStartAndEndOfLine(location.Line);
-            var (lineAfterStart, lineAfterEnd) = location.SourceFile.GetStartAndEndOfLine(location.Line + 1);
+            var lineBefore = location.SourceFile.GetStartAndEndOfLine(location.Line - 1);
+            var line = location.SourceFile.GetStartAndEndOfLine(location.Line);
+            var lineAfter = location.SourceFile.GetStartAndEndOfLine(location.Line + 1);
             
-            Console.WriteLine($"{location.SourceFile.FileInfo?.FullName}:({location.Line}:{location.Position - start})");
+            // couldn't find the line
+            if (line is null) throw new Exception(message);
+            
+            Console.WriteLine($"{location.SourceFile.FileInfo?.FullName}:({location.Line}:{location.Position - line.Value.start})");
             Console.WriteLine($"\t{message}");
 
             Console.WriteLine();
             
-            if (lineBeforeStart >= 0)
+            if (lineBefore is not null)
             {
-                Console.WriteLine($"|{location.Line - 1}\t{location.SourceFile.Text[lineBeforeStart..lineBeforeEnd].TrimEnd()}");
+                Console.WriteLine($"|{location.Line - 1}\t{location.SourceFile.Text[lineBefore.Value.start..lineBefore.Value.end].TrimEnd()}");
             }
             
-            Console.WriteLine($"|{location.Line}\t{location.SourceFile.Text[start..end].TrimEnd()}");
+            Console.WriteLine($"|{location.Line}\t{location.SourceFile.Text[line.Value.start..line.Value.end].TrimEnd()}");
             
             Console.ForegroundColor = ConsoleColor.DarkMagenta;
             Console.Write("|\t");
-            for (var i = 0; i < location.Position - start - 1; i++)
+            for (var i = 0; i < location.Position - line.Value.start - 1; i++)
             {
                 Console.Write(" ");
             }
             Console.WriteLine("^");
             Console.ForegroundColor = ConsoleColor.Red;
             
-            if (lineAfterStart >= 0)
+            if (lineAfter is not null)
             {
-                Console.WriteLine($"|{location.Line + 1}\t{location.SourceFile.Text[lineAfterStart..lineAfterEnd].TrimEnd()}");
+                Console.WriteLine($"|{location.Line + 1}\t{location.SourceFile.Text[lineAfter.Value.start..lineAfter.Value.end].TrimEnd()}");
             }
         }
         else
@@ -78,34 +81,37 @@ public static class Report
         
         if (location?.SourceFile is not null)
         {
-            var (lineBeforeStart, lineBeforeEnd) = location.SourceFile.GetStartAndEndOfLine(location.Line - 1);
-            var (start, end) = location.SourceFile.GetStartAndEndOfLine(location.Line);
-            var (lineAfterStart, lineAfterEnd) = location.SourceFile.GetStartAndEndOfLine(location.Line + 1);
+            var lineBefore = location.SourceFile.GetStartAndEndOfLine(location.Line - 1);
+            var line = location.SourceFile.GetStartAndEndOfLine(location.Line);
+            var lineAfter = location.SourceFile.GetStartAndEndOfLine(location.Line + 1);
             
-            Console.WriteLine($"{location.SourceFile.FileInfo?.FullName}:({location.Line}:{location.Position - start})");
+            // couldn't find the line
+            if (line is null) throw new Exception(message);
+            
+            Console.WriteLine($"{location.SourceFile.FileInfo?.FullName}:({location.Line}:{location.Position - line.Value.start})");
             Console.WriteLine($"\t{message}");
 
             Console.WriteLine();
             
-            if (lineBeforeStart >= 0)
+            if (lineBefore is not null)
             {
-                Console.WriteLine($"|{location.Line - 1}\t{location.SourceFile.Text[lineBeforeStart..lineBeforeEnd].TrimEnd()}");
+                Console.WriteLine($"|{location.Line - 1}\t{location.SourceFile.Text[lineBefore.Value.start..lineBefore.Value.end].TrimEnd()}");
             }
             
-            Console.WriteLine($"|{location.Line}\t{location.SourceFile.Text[start..end].TrimEnd()}");
+            Console.WriteLine($"|{location.Line}\t{location.SourceFile.Text[line.Value.start..line.Value.end].TrimEnd()}");
             
             Console.ForegroundColor = ConsoleColor.DarkMagenta;
             Console.Write("|\t");
-            for (var i = 0; i < location.Position - start - 1; i++)
+            for (var i = 0; i < location.Position - line.Value.start - 1; i++)
             {
                 Console.Write(" ");
             }
             Console.WriteLine("^");
             Console.ForegroundColor = ConsoleColor.Yellow;
             
-            if (lineAfterStart >= 0)
+            if (lineAfter is not null)
             {
-                Console.WriteLine($"|{location.Line + 1}\t{location.SourceFile.Text[lineAfterStart..lineAfterEnd].TrimEnd()}");
+                Console.WriteLine($"|{location.Line + 1}\t{location.SourceFile.Text[lineAfter.Value.start..lineAfter.Value.end].TrimEnd()}");
             }
         }
         else
