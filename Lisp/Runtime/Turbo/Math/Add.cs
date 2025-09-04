@@ -20,7 +20,7 @@ public class Add : ITurboFunction
     
     public BaseLispValue Execute(Node function, List<Node> parameters, LispScope scope)
     {
-        if (parameters.Count < 2) throw Report.Error(new WrongArgumentCountReportMessage(Arguments, parameters.Count), function.Location);
+        if (parameters.Count < 2) throw Report.Error(new WrongArgumentCountReportMessage(Arguments, parameters.Count, 2), function.Location);
 
         var accum = 0m;        
         foreach (var parameter in parameters)
