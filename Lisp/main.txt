@@ -5,7 +5,14 @@
 ; we want windowing graphics library
 ; *     we want reactivity
 
-(let c { 
-    value: 2.2
-    value2: 2.2
-})
+(let doThis (lambda (x)
+    (switch
+        ((< x 0) (* x -1))
+        ((>= x 0) x))
+        (let doThat (lambda (x)
+            (switch
+                ((< x 0) (* x -1))
+                ((>= x 0) x))))))
+
+(print (doThis -10))
+(print (doThat -10))

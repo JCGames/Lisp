@@ -38,7 +38,7 @@ public static class Runner
 
         var function = EvaluateNode(listNode.Nodes[0], scope);
 
-        if (function is not IExecutableLispValue executable) throw Report.Error(new NotAFunctionReportMessage());
+        if (function is not IExecutableLispValue executable) throw Report.Error(new NotAFunctionReportMessage(), listNode.Location);
         
         return executable.Execute(listNode.Nodes[1..], scope);
     }
