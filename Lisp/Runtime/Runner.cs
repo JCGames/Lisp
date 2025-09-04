@@ -12,6 +12,7 @@ namespace Lisp;
 public static class Runner
 {
     public static TextWriter StdOut = Console.Out;
+    public static TextReader StdIn = Console.In;
     public static void Run(List<ListNode> list)
     {
         var scope = new LispScope();

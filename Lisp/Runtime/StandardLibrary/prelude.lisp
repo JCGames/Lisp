@@ -9,6 +9,7 @@
 (def lambda Turbo.CreateLambda)
 (def if Turbo.If)
 (def switch Turbo.Switch)
+(def debug Turbo.DebugRepl)
 
 (import "math.lisp")
 (import "boolean.lisp")

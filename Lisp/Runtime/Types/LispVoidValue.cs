@@ -5,6 +5,9 @@ namespace Lisp.Types;
 /// </summary>
 public class LispVoidValue : BaseLispValue
 {
+    public static LispVoidValue Instance = new();
+    private LispVoidValue()
+    { }
     public override string ToString() => "(void)";
 
     protected override bool Equals(BaseLispValue other) => false;

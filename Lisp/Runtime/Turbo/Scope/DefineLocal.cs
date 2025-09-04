@@ -35,6 +35,6 @@ public class DefineLocal : ITurboFunction
         
         scope.UpdateScope(identifierName, lispValue);
         
-        return new LispVoidValue();
+        return LispVoidValue.Instance;
     }
 }

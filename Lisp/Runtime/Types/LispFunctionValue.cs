@@ -35,21 +35,21 @@ public class LispFunctionValue : LispValue, IExecutableLispValue
     public BaseLispValue Execute(List<Node> parameters, LispScope scope)
     {
         if (parameters.Count != Arguments.Count) Report.Error(new WrongArgumentCountReportMessage(Arguments, parameters.Count));
-
-        scope = scope.PushScope();
+        
+        var newScope = scope.PushScope();
         for (var i = 0; i < Arguments.Count; i++)
         {
             var name = Arguments[i].Text;
             var value = Runner.EvaluateNode(parameters[i], scope);
             if (value is not LispValue lispValue) throw Report.Error(new WrongArgumentTypeReportMessage($"{value} is not a valid value."));
 
-            scope.UpdateScope(name, lispValue);
+            newScope.UpdateScope(name, lispValue);
         }
 
         BaseLispValue result = null!;
         foreach (var list in Definition)
         {
-            result = Runner.EvaluateNode(list, scope);    
+            result = Runner.EvaluateNode(list, newScope);    
         }
         
         return result;

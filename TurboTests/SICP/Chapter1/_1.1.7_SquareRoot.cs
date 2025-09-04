@@ -3,10 +3,8 @@ namespace TurboTests.SICP.Chapter1;
 [TestClass]
 public class _1_1_7_SquareRoot
 {
-    // TODO: This is broken, but it should work.
-    // `(sqrt (+ (sqrt 2) (sqrt 3)))` is the longest and should take only 12 steps
     [TestMethod]
-    public void TestConditionalIf()
+    public void TestSquareRootEstimation()
     {
         // lang=clojure
         var output = TestTools.Run(
@@ -30,7 +28,7 @@ public class _1_1_7_SquareRoot
                 (/ (+ x y) 2)))
                 
             (def good-enough? (lambda (guess x)
-                (< (abs (- (square guess) x)) 100)))
+                (< (abs (- (square guess) x)) 0.001)))
                 
             (def sqrt (lambda (x)
                 (sqrt-iter 1.0 x)))
@@ -41,6 +39,6 @@ public class _1_1_7_SquareRoot
             (print (square (sqrt 1000)))
             """);
 
-        // Assert.AreEqual("5\n0\n5\n", output);
+        Assert.AreEqual("3.0000915541\n11.7046999178\n1.7739279023\n1000.0003699244\n", output);
     }
 }
