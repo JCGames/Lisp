@@ -35,7 +35,7 @@ public class DebugRepl : ITurboFunction
 
                 if (line.StartsWith(":"))
                 {
-                    exit = HandleReplCommand(line, scope);
+                    if (HandleReplCommand(line, scope, ref exit)) continue;
                 }
 
                 var parser = new Parser(new(line));
@@ -60,7 +60,14 @@ public class DebugRepl : ITurboFunction
         return LispVoidValue.Instance;
     }
     
-    private bool HandleReplCommand(string command, LispScope scope)
+    /// <summary>
+    /// Handles a repl command.
+    /// </summary>
+    /// <param name="command"></param>
+    /// <param name="scope"></param>
+    /// <param name="exit">If the command to exit was executed sets exit to true.</param>
+    /// <returns>True if a command was consumed, otherwise false.</returns>
+    private bool HandleReplCommand(string command, LispScope scope, ref bool exit)
     {
         switch (command)
         {
@@ -70,8 +77,9 @@ public class DebugRepl : ITurboFunction
                     :h - print this help
                     :q - quit the repl
                     """);
-                break;
+                return true;
             case ":q":
+                exit = true;
                 return true;
             default:
                 Runner.StdOut.WriteLine($"Unrecognized command {command} (:h for help)");
