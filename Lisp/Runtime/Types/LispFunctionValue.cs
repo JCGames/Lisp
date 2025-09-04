@@ -32,7 +32,7 @@ public class LispFunctionValue : LispValue, IExecutableLispValue
         return writer.ToString();
     }
 
-    public BaseLispValue Execute(List<Node> parameters, LispScope scope)
+    public BaseLispValue Execute(Node function, List<Node> parameters, LispScope scope)
     {
         if (parameters.Count != Arguments.Count) Report.Error(new WrongArgumentCountReportMessage(Arguments, parameters.Count));
         

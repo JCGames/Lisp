@@ -12,9 +12,9 @@ public class DebugRepl : ITurboFunction
 
     public List<IdentifierNode> Arguments => ArgumentDeclaration;
     
-    public BaseLispValue Execute(List<Node> parameters, LispScope scope)
+    public BaseLispValue Execute(Node function, List<Node> parameters, LispScope scope)
     {
-        if (parameters.Count > 0) throw Report.Error(new WrongArgumentCountReportMessage(ArgumentDeclaration, parameters.Count));
+        if (parameters.Count > 0) throw Report.Error(new WrongArgumentCountReportMessage(ArgumentDeclaration, parameters.Count), function.Location);
 
         Report.PreferThrownErrors = true;
         
@@ -56,6 +56,8 @@ public class DebugRepl : ITurboFunction
                 // Console.WriteLine(ex.Message);
             }
         }
+        
+        Report.PreferThrownErrors = false;
         
         return LispVoidValue.Instance;
     }

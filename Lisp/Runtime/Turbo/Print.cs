@@ -18,7 +18,7 @@ public class Print : ITurboFunction
 
     public List<IdentifierNode> Arguments => ArgumentDeclaration;
     
-    public BaseLispValue Execute(List<Node> parameters, LispScope scope)
+    public BaseLispValue Execute(Node function, List<Node> parameters, LispScope scope)
     {
         foreach (var parameter in parameters)
         {

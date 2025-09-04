@@ -18,12 +18,12 @@ public class Not : ITurboFunction
 
     public List<IdentifierNode> Arguments => ArgumentDeclaration;
     
-    public BaseLispValue Execute(List<Node> parameters, LispScope scope)
+    public BaseLispValue Execute(Node function, List<Node> parameters, LispScope scope)
     {
-        if (parameters.Count != 1) Report.Error(new WrongArgumentCountReportMessage(Arguments, parameters.Count));
+        if (parameters.Count != 1) Report.Error(new WrongArgumentCountReportMessage(Arguments, parameters.Count), function.Location);
         
         var value = Runner.EvaluateNode(parameters[0], scope);
-        if (value is not LispBooleanValue boolValue) throw Report.Error(new WrongArgumentTypeReportMessage("Not only works with boolean arguments"));
+        if (value is not LispBooleanValue boolValue) throw Report.Error(new WrongArgumentTypeReportMessage("Not only works with boolean arguments"), parameters[0].Location);
         
         return new LispBooleanValue(!boolValue.Value);
     }

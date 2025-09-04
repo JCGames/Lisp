@@ -18,14 +18,14 @@ public class Or : ITurboFunction
 
     public List<IdentifierNode> Arguments => ArgumentDeclaration;
 
-    public BaseLispValue Execute(List<Node> parameters, LispScope scope)
+    public BaseLispValue Execute(Node function, List<Node> parameters, LispScope scope)
     {
-        if (parameters.Count < 2) Report.Error(new WrongArgumentCountReportMessage(Arguments, parameters.Count, 2));
+        if (parameters.Count < 2) Report.Error(new WrongArgumentCountReportMessage(Arguments, parameters.Count, 2), function.Location);
 
         foreach (var parameter in parameters)
         {
             var value = Runner.EvaluateNode(parameter, scope);
-            if (value is not LispBooleanValue boolValue) throw Report.Error(new WrongArgumentTypeReportMessage("And expects it's arguments to be booleans."));
+            if (value is not LispBooleanValue boolValue) throw Report.Error(new WrongArgumentTypeReportMessage("And expects it's arguments to be booleans."), parameter.Location);
             
             if (boolValue.Value) return new LispBooleanValue(true);
         }

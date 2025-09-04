@@ -32,6 +32,6 @@
 (def sqrt (lambda (x)
     (sqrt-iter 1.0 x)))
 
-(debug)
+; (debug)
 
 (print (sqrt 9))

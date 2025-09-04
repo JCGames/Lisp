@@ -29,7 +29,7 @@ public static class Report
             // couldn't find the line
             if (line is null) throw new Exception(message);
             
-            Console.WriteLine($"{location.SourceFile.FileInfo?.FullName}:({location.Line}:{location.Position - line.Value.start})");
+            Console.WriteLine($"{location.SourceFile.FileInfo?.FullName ?? "no_file"}:{location.Line}:{location.Position - line.Value.start}");
             Console.WriteLine($"\t{message}");
 
             Console.WriteLine();
@@ -88,7 +88,7 @@ public static class Report
             // couldn't find the line
             if (line is null) throw new Exception(message);
             
-            Console.WriteLine($"{location.SourceFile.FileInfo?.FullName}:({location.Line}:{location.Position - line.Value.start})");
+            Console.WriteLine($"{location.SourceFile.FileInfo?.FullName ?? "no_file"}:{location.Line}:{location.Position - line.Value.start}");
             Console.WriteLine($"\t{message}");
 
             Console.WriteLine();

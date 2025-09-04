@@ -25,9 +25,9 @@ public class LispTurboFunctionValue : LispValue, IExecutableLispValue
         return writer.ToString();
     }
 
-    public BaseLispValue Execute(List<Node> parameters, LispScope scope)
+    public BaseLispValue Execute(Node function, List<Node> parameters, LispScope scope)
     {
-        return Implementation.Execute(parameters, scope);
+        return Implementation.Execute(function, parameters, scope);
     }
 
     protected override bool Equals(BaseLispValue other) =>

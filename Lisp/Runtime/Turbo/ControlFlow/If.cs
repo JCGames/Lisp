@@ -28,12 +28,12 @@ public class If : ITurboFunction
 
     public List<IdentifierNode> Arguments => ArgumentDeclaration;
     
-    public BaseLispValue Execute(List<Node> parameters, LispScope scope)
+    public BaseLispValue Execute(Node function, List<Node> parameters, LispScope scope)
     {
-        if (parameters.Count < 2) Report.Error(new WrongArgumentCountReportMessage(ArgumentDeclaration, parameters.Count, 2));
+        if (parameters.Count < 2) Report.Error(new WrongArgumentCountReportMessage(ArgumentDeclaration, parameters.Count, 2), function.Location);
 
         var condition = Runner.EvaluateNode(parameters[0], scope);
-        if (condition is not LispBooleanValue boolean) throw Report.Error(new WrongArgumentTypeReportMessage("If condition should return a boolean."));
+        if (condition is not LispBooleanValue boolean) throw Report.Error(new WrongArgumentTypeReportMessage("If condition should return a boolean."), parameters[0].Location);
 
         if (boolean.Value)
         {

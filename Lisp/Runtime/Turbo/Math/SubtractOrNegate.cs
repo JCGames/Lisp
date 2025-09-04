@@ -18,9 +18,9 @@ public class SubtractOrNegate : ITurboFunction
 
     public List<IdentifierNode> Arguments => ArgumentDeclaration;
     
-    public BaseLispValue Execute(List<Node> parameters, LispScope scope)
+    public BaseLispValue Execute(Node function, List<Node> parameters, LispScope scope)
     {
-        if (parameters.Count < 1) throw Report.Error(new WrongArgumentCountReportMessage(Arguments, parameters.Count));
+        if (parameters.Count < 1) throw Report.Error(new WrongArgumentCountReportMessage(Arguments, parameters.Count), function.Location);
 
         var accum = GetValue(parameters[0], scope);
         if (parameters.Count == 1)
@@ -40,7 +40,7 @@ public class SubtractOrNegate : ITurboFunction
     private decimal GetValue(Node node, LispScope scope)
     {
         var value = Runner.EvaluateNode(node, scope);
-        if (value is not LispNumberValue number) throw Report.Error(new WrongArgumentTypeReportMessage("Multiply requires its arguments to be numbers."));
+        if (value is not LispNumberValue number) throw Report.Error(new WrongArgumentTypeReportMessage("Multiply requires its arguments to be numbers."), node.Location);
         return number.Value;
     }
 }

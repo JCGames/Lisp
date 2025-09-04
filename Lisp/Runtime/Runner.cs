@@ -41,7 +41,7 @@ public static class Runner
 
         if (function is not IExecutableLispValue executable) throw Report.Error(new NotAFunctionReportMessage(), listNode.Location);
         
-        return executable.Execute(listNode.Nodes[1..], scope);
+        return executable.Execute(listNode.Nodes[0], listNode.Nodes[1..], scope);
     }
     
     private static void InitializeGlobalScope(LispScope scope)

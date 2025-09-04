@@ -6,5 +6,5 @@ public interface IExecutableLispValue
 {
     public List<IdentifierNode> Arguments { get; }
     
-    BaseLispValue Execute(List<Node> parameters, LispScope scope);
+    BaseLispValue Execute(Node function, List<Node> parameters, LispScope scope);
 }

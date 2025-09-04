@@ -19,14 +19,14 @@ public class Import : ITurboFunction
 
     public List<IdentifierNode> Arguments => ArgumentDeclaration;
     
-    public BaseLispValue Execute(List<Node> parameters, LispScope scope)
+    public BaseLispValue Execute(Node function, List<Node> parameters, LispScope scope)
     {
-        if (parameters.Count < 1) Report.Error(new WrongArgumentCountReportMessage(ArgumentDeclaration, parameters.Count, 1));
+        if (parameters.Count < 1) Report.Error(new WrongArgumentCountReportMessage(ArgumentDeclaration, parameters.Count, 1), function.Location);
         
         var result = Runner.EvaluateNode(parameters[0], scope);
         
-        if (result is not LispStringValue str) throw Report.Error(new WrongArgumentTypeReportMessage("Import expects a string for the path."));
-        if (parameters[0] is not TokenNode token) throw Report.Error(new WrongArgumentTypeReportMessage("Import only accepts a token as its argument."));
+        if (result is not LispStringValue str) throw Report.Error(new WrongArgumentTypeReportMessage("Import expects a string for the path."), parameters[0].Location);
+        if (parameters[0] is not TokenNode token) throw Report.Error(new WrongArgumentTypeReportMessage("Import only accepts a token as its argument."), parameters[0].Location);
         
         var path = Path.Join(token.Location.SourceFile?.FileInfo?.DirectoryName ?? Directory.GetCurrentDirectory(), str.Value);
         

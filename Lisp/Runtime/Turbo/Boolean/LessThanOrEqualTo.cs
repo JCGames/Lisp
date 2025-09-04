@@ -23,14 +23,14 @@ public class LessThanOrEqualTo : ITurboFunction
 
     public List<IdentifierNode> Arguments => ArgumentDeclaration;
     
-    public BaseLispValue Execute(List<Node> parameters, LispScope scope)
+    public BaseLispValue Execute(Node function, List<Node> parameters, LispScope scope)
     {
-        if (parameters.Count != 2) Report.Error(new WrongArgumentCountReportMessage(Arguments, parameters.Count));
+        if (parameters.Count != 2) Report.Error(new WrongArgumentCountReportMessage(Arguments, parameters.Count), function.Location);
         
         var left = Runner.EvaluateNode(parameters[0], scope);
-        if (left is not LispNumberValue leftNumber) throw Report.Error(new WrongArgumentTypeReportMessage("Expected the left value to be a number"));
+        if (left is not LispNumberValue leftNumber) throw Report.Error(new WrongArgumentTypeReportMessage("Expected the left value to be a number"), parameters[0].Location);
         var right = Runner.EvaluateNode(parameters[1], scope);
-        if (right is not LispNumberValue rightNumber) throw Report.Error(new WrongArgumentTypeReportMessage("Expected the right value to be a number"));
+        if (right is not LispNumberValue rightNumber) throw Report.Error(new WrongArgumentTypeReportMessage("Expected the right value to be a number"), parameters[1].Location);
 
         var result = leftNumber.Value <= rightNumber.Value;
         return new LispBooleanValue(result);
