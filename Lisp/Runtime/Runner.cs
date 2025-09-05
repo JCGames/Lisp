@@ -31,6 +31,7 @@ public static class Runner
         NumberLiteralNode number => new LispNumberValue(number.Value),
         StringLiteralNode stringLiteral => new LispStringValue(stringLiteral.Text),
         StructNode structNode => new LispStructValue(structNode.Struct, scope),
+        SymbolNode symbol => LispSymbolValue.New(symbol.Text),
         _ => throw new NotImplementedException("Unknown token type.")
     };
 

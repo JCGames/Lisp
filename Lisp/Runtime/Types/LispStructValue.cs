@@ -5,7 +5,7 @@ using Lisp.Parsing.Nodes;
 
 namespace Lisp.Types;
 
-public class LispStructValue : LispValue
+public class LispStructValue : LispValue, ICollectionLispValue<LispStringValue>
 {
     public Dictionary<string, LispValue> Value { get; } = new();
 
@@ -24,6 +24,12 @@ public class LispStructValue : LispValue
             
             Value.Add(item.Key.Text, lispValue);
         }
+    }
+    
+    public LispValue? GetValue(LispStringValue key)
+    {
+        Value.TryGetValue(key.Value, out var value);
+        return value;
     }
     
     public override string ToString()
