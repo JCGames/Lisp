@@ -80,6 +80,8 @@ public class LispFunctionValue : LispValue, IExecutableLispValue
             var value = Runner.EvaluateNode(arguments[i], scope);
             if (value is not LispValue lispValue) throw Report.Error(new WrongArgumentTypeReportMessage($"{value} is not a valid value"), arguments[i].Location);
             
+            // In this case, it's probably more relevant to show the function definition.
+            if (newScope.HasOwnValue(PositionalParameters[i].Text)) throw Report.Error("Attempted to set the same parameter twice", PositionalParameters[i].Location);
             newScope.UpdateScope(PositionalParameters[i].Text, lispValue);
         }
         
@@ -89,13 +91,16 @@ public class LispFunctionValue : LispValue, IExecutableLispValue
             var value = Runner.EvaluateNode(keyValue, scope); 
             if (value is not LispValue lispValue) throw Report.Error(new WrongArgumentTypeReportMessage($"{value} is not a valid value"), keyValue.Location);
             
+            // In this case, it's probably more relevant to show the function call.
+            if (newScope.HasOwnValue(keyValue.Key.Text)) throw Report.Error("Attempted to set the same parameter twice", keyValue.Location);
             newScope.UpdateScope(keyValue.Key.Text, lispValue);
         }
 
+        // Set missing named parameters to nil
         foreach (var namedParameter in NamedParameters)
         {
             var key = namedParameter.Key.Text;
-            if (!newScope.HasOwnValue(key))
+            if (newScope.HasOwnValue(key))
             {
                 newScope.UpdateScope(key, LispNilValue.Instance);
             }
@@ -108,8 +113,12 @@ public class LispFunctionValue : LispValue, IExecutableLispValue
         {
             var value = Runner.EvaluateNode(arguments[i], scope);
             if (value is not LispValue lispValue) throw Report.Error(new WrongArgumentTypeReportMessage($"{value} is not a valid value"), arguments[i].Location);
+            
             restValue.Value.Add(lispValue);
         }
+        
+        // Probably more relevant to show the function definition here.
+        if (newScope.HasOwnValue(RestParameter.Text)) throw Report.Error("Attempted to set the same parameter twice", RestParameter.Location);
         newScope.UpdateScope(RestParameter.Text, restValue);
         
         return newScope;
