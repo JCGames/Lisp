@@ -10,6 +10,10 @@ public static class TestTools
 {
     public static string Run(string programText)
     {
+        var writer = new StringWriter();
+        Runner.StdOut = writer;
+        Report.PreferThrownErrors = true;
+        
         var standardLibraryFile = new SourceFile(new FileInfo("Runtime/StandardLibrary/prelude.lisp"));
         var sourceFile = new SourceFile(programText);
         
@@ -18,10 +22,6 @@ public static class TestTools
         
         var standardLibrary = parserStandardLibrary.Parse();
         var program = parser.Parse();
-        
-        var writer = new StringWriter();
-        Runner.StdOut = writer;
-        Report.PreferThrownErrors = true;
         
         Runner.Run([..standardLibrary, ..program]);
         
