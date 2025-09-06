@@ -2,19 +2,20 @@ using Lisp.Diagnostics;
 using Lisp.Exceptions;
 using Lisp.Parsing;
 using Lisp.Parsing.Nodes;
+using Lisp.Parsing.Nodes.Classifications;
 using Lisp.Types;
 
 namespace Lisp.Turbo;
 
 public class DebugRepl : ITurboFunction
 {
-    private static readonly List<IdentifierNode> ArgumentDeclaration = [ ];
+    private static readonly List<IParameterNode> ArgumentDeclaration = [ ];
 
-    public List<IdentifierNode> Arguments => ArgumentDeclaration;
+    public IEnumerable<IParameterNode> Parameters => ArgumentDeclaration;
     
-    public BaseLispValue Execute(Node function, List<Node> parameters, LispScope scope)
+    public BaseLispValue Execute(Node function, List<Node> arguments, LispScope scope)
     {
-        if (parameters.Count > 0) throw Report.Error(new WrongArgumentCountReportMessage(ArgumentDeclaration, parameters.Count), function.Location);
+        if (arguments.Count > 0) throw Report.Error(new WrongArgumentCountReportMessage(ArgumentDeclaration, arguments.Count), function.Location);
 
         Report.PreferThrownErrors = true;
         

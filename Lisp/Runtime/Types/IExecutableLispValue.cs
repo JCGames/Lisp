@@ -1,10 +1,11 @@
 using Lisp.Parsing.Nodes;
+using Lisp.Parsing.Nodes.Classifications;
 
 namespace Lisp.Types;
 
 public interface IExecutableLispValue
 {
-    public List<IdentifierNode> Arguments { get; }
+    public IEnumerable<IParameterNode> Parameters { get; }
     
-    BaseLispValue Execute(Node function, List<Node> parameters, LispScope scope);
+    BaseLispValue Execute(Node function, List<Node> arguments, LispScope scope);
 }

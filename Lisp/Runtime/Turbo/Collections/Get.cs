@@ -1,15 +1,16 @@
 using Lisp.Diagnostics;
 using Lisp.Exceptions;
 using Lisp.Parsing.Nodes;
+using Lisp.Parsing.Nodes.Classifications;
 using Lisp.Types;
 
 namespace Lisp.Turbo;
 
 public class Get : ITurboFunction
 {
-    private static readonly List<IdentifierNode> ArgumentDeclaration =
+    private static readonly List<IParameterNode> ArgumentDeclaration =
     [
-        new()
+        new IdentifierNode()
         {
             Text = "collection",
             Location = Location.None
@@ -21,19 +22,19 @@ public class Get : ITurboFunction
         }
     ];
 
-    public List<IdentifierNode> Arguments =>  ArgumentDeclaration;
+    public IEnumerable<IParameterNode> Parameters =>  ArgumentDeclaration;
     
-    public BaseLispValue Execute(Node function, List<Node> parameters, LispScope scope)
+    public BaseLispValue Execute(Node function, List<Node> arguments, LispScope scope)
     {
-        if (parameters.Count < 2) throw Report.Error(new WrongArgumentCountReportMessage(Arguments, parameters.Count), function.Location);
+        if (arguments.Count < 2) throw Report.Error(new WrongArgumentCountReportMessage(Parameters, arguments.Count), function.Location);
 
-        var firstArg = Runner.EvaluateNode(parameters[0], scope);
+        var firstArg = Runner.EvaluateNode(arguments[0], scope);
         if (firstArg is not ICollectionLispValue collection) throw Report.Error(new WrongArgumentTypeReportMessage("Get expects it's first argument to be a collection type"), function.Location);
 
         LispValue? result = null;
-        for (var i = 1; i < parameters.Count; i++)
+        for (var i = 1; i < arguments.Count; i++)
         {
-            var node = parameters[i];
+            var node = arguments[i];
             
             var keyType = collection.KeyType;
             var accessor = Runner.EvaluateNode(node, scope);
@@ -42,9 +43,9 @@ public class Get : ITurboFunction
             result = collection.GetValue((LispValue)accessor);
             if (result is null) throw Report.Error($"The key {accessor} was not found in the collection", node.Location);
 
-            if (i != parameters.Count - 1)
+            if (i != arguments.Count - 1)
             {
-                if (result is not ICollectionLispValue nextCollection) throw Report.Error("More accessors were passed in, but the value found was not a collection", parameters[i + 1].Location);
+                if (result is not ICollectionLispValue nextCollection) throw Report.Error("More accessors were passed in, but the value found was not a collection", arguments[i + 1].Location);
                 collection = nextCollection;
             }
         }

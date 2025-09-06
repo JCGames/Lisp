@@ -6,6 +6,9 @@ public interface ICollectionLispValue
 {
     public Type KeyType { get; }
     public LispValue? GetValue(LispValue key);
+    public LispValue First();
+    public ICollectionLispValue Rest();
+    public LispNumberValue Count();
 }
 public interface ICollectionLispValue<in TKey> : ICollectionLispValue
     where TKey : LispValue
@@ -18,6 +21,9 @@ public interface ICollectionLispValue<in TKey> : ICollectionLispValue
         return GetValue(typedKey);
         
     }
+
+    public new ICollectionLispValue<TKey> Rest();
+    ICollectionLispValue ICollectionLispValue.Rest() => Rest();
     
     Type ICollectionLispValue.KeyType => typeof(TKey);
 

@@ -2,31 +2,32 @@ using Lisp.Diagnostics;
 using Lisp.Exceptions;
 using Lisp.Parsing;
 using Lisp.Parsing.Nodes;
+using Lisp.Parsing.Nodes.Classifications;
 using Lisp.Types;
 
 namespace Lisp.Turbo;
 
 public class Import : ITurboFunction
 {
-    private static readonly List<IdentifierNode> ArgumentDeclaration =
+    private static readonly List<IParameterNode> ArgumentDeclaration =
     [
-        new()
+        new IdentifierNode()
         {
             Text = "path",
             Location = Location.None
         }
     ];
 
-    public List<IdentifierNode> Arguments => ArgumentDeclaration;
+    public IEnumerable<IParameterNode> Parameters => ArgumentDeclaration;
     
-    public BaseLispValue Execute(Node function, List<Node> parameters, LispScope scope)
+    public BaseLispValue Execute(Node function, List<Node> arguments, LispScope scope)
     {
-        if (parameters.Count < 1) Report.Error(new WrongArgumentCountReportMessage(ArgumentDeclaration, parameters.Count, 1), function.Location);
+        if (arguments.Count < 1) Report.Error(new WrongArgumentCountReportMessage(ArgumentDeclaration, arguments.Count, 1), function.Location);
         
-        var result = Runner.EvaluateNode(parameters[0], scope);
+        var result = Runner.EvaluateNode(arguments[0], scope);
         
-        if (result is not LispStringValue str) throw Report.Error(new WrongArgumentTypeReportMessage("Import expects a string for the path."), parameters[0].Location);
-        if (parameters[0] is not TokenNode token) throw Report.Error(new WrongArgumentTypeReportMessage("Import only accepts a token as its argument."), parameters[0].Location);
+        if (result is not LispStringValue str) throw Report.Error(new WrongArgumentTypeReportMessage("Import expects a string for the path."), arguments[0].Location);
+        if (arguments[0] is not TokenNode token) throw Report.Error(new WrongArgumentTypeReportMessage("Import only accepts a token as its argument."), arguments[0].Location);
         
         var path = Path.Join(token.Location.SourceFile?.FileInfo?.DirectoryName ?? Directory.GetCurrentDirectory(), str.Value);
         

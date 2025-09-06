@@ -1,48 +1,49 @@
 using Lisp.Diagnostics;
 using Lisp.Exceptions;
 using Lisp.Parsing.Nodes;
+using Lisp.Parsing.Nodes.Classifications;
 using Lisp.Types;
 
 namespace Lisp.Turbo;
 
 public class If : ITurboFunction
 {
-    private static readonly List<IdentifierNode> ArgumentDeclaration =
+    private static readonly List<IParameterNode> ArgumentDeclaration =
     [
-        new()
+        new IdentifierNode()
         {
             Text = "condition",
             Location = Location.None
         },
-        new()
+        new IdentifierNode()
         {
             Text = "true-branch",
             Location = Location.None
         },
-        new()
+        new IdentifierNode()
         {
             Text = "false-branch",
             Location = Location.None
         }
     ];
 
-    public List<IdentifierNode> Arguments => ArgumentDeclaration;
+    public IEnumerable<IParameterNode> Parameters => ArgumentDeclaration;
     
-    public BaseLispValue Execute(Node function, List<Node> parameters, LispScope scope)
+    public BaseLispValue Execute(Node function, List<Node> arguments, LispScope scope)
     {
-        if (parameters.Count < 2) Report.Error(new WrongArgumentCountReportMessage(ArgumentDeclaration, parameters.Count, 2), function.Location);
+        if (arguments.Count < 2) Report.Error(new WrongArgumentCountReportMessage(ArgumentDeclaration, arguments.Count, 2), function.Location);
 
-        var condition = Runner.EvaluateNode(parameters[0], scope);
-        if (condition is not LispBooleanValue boolean) throw Report.Error(new WrongArgumentTypeReportMessage("If condition should return a boolean."), parameters[0].Location);
+        var condition = Runner.EvaluateNode(arguments[0], scope);
+        if (condition is not LispBooleanValue boolean) throw Report.Error(new WrongArgumentTypeReportMessage("If condition should return a boolean."), arguments[0].Location);
 
         if (boolean.Value)
         {
-            return Runner.EvaluateNode(parameters[1], scope);
+            return Runner.EvaluateNode(arguments[1], scope);
         }
         
-        if (parameters.Count >= 3)
+        if (arguments.Count >= 3)
         {
-            return Runner.EvaluateNode(parameters[2], scope);
+            return Runner.EvaluateNode(arguments[2], scope);
         }
 
         return LispVoidValue.Instance;

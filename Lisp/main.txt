@@ -10,7 +10,17 @@
     age: 10 
 })
 
+(def p (lambda (&stuff)
+     (let item (first stuff))
+     (let other (rest stuff))
+     (print item)
+     (if (not (empty? other))
+         (apply p other))))
+     
+(debug)
 
+(p 1 2 3 '(4)) ; 1 2 3 '(4)
+(apply p 1 2 3 '(4 5 6 '(7))) ; 1 2 3 4 5 6 '(7)
 
 (def fib (lambda (n)
   (switch ((= n 0) 0)

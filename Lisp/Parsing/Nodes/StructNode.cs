@@ -1,6 +1,9 @@
-﻿namespace Lisp.Parsing.Nodes;
+﻿using System.Collections;
+using Lisp.Types;
 
-public class StructNode : Node
+namespace Lisp.Parsing.Nodes;
+
+public class StructNode : Node, IEnumerable<KeyValueNode>
 {
     public List<KeyValueNode> Struct { get; set; }
     
@@ -12,5 +15,15 @@ public class StructNode : Node
             keyValueNode.Print(indent + '\t', writer);
         }
         writer?.WriteLine($"{indent}]");
+    }
+
+    public IEnumerator<KeyValueNode> GetEnumerator()
+    {
+        throw new NotImplementedException();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
     }
 }

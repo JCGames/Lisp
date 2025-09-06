@@ -7,28 +7,27 @@ namespace Lisp.Types;
 
 public class LispStructValue : LispValue, ICollectionLispValue<LispStringValue>
 {
-    public Dictionary<string, LispValue> Value { get; } = new();
+    public Dictionary<LispStringValue, LispValue> Value { get; } = new();
 
-    public LispStructValue(Dictionary<string, LispValue> value)
+    public LispStructValue(Dictionary<LispStringValue, LispValue> value)
     {
         Value = value;
     }
 
     public LispStructValue(IEnumerable<KeyValueNode> nodes, LispScope scope)
     {
-        Value = new();
         foreach (var item in nodes)
         {
             var value = Runner.EvaluateNode(item.Value, scope);
             if (value is not LispValue lispValue) throw Report.Error($"{value} cannot be stored in a struct", item.Location);
             
-            Value.Add(item.Key.Text, lispValue);
+            Value.Add(new(item.Key.Text), lispValue);
         }
     }
     
     public LispValue? GetValue(LispStringValue key)
     {
-        Value.TryGetValue(key.Value, out var value);
+        Value.TryGetValue(new(key.Value), out var value);
         return value;
     }
     
@@ -62,4 +61,17 @@ public class LispStructValue : LispValue, ICollectionLispValue<LispStringValue>
         }
         return hash.ToHashCode();
     }
+
+    public LispValue First()
+    {
+        var value = Value.First();
+        return new LispTupleValue((value.Key, value.Value));
+    }
+
+    public ICollectionLispValue<LispStringValue> Rest()
+    {
+        throw new NotImplementedException();
+    }
+
+    public LispNumberValue Count() => new(Value.Count);
 }

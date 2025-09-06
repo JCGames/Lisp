@@ -1,13 +1,14 @@
 using Lisp.Diagnostics;
 using Lisp.Exceptions;
 using Lisp.Parsing.Nodes;
+using Lisp.Parsing.Nodes.Classifications;
 using Lisp.Types;
 
 namespace Lisp.Turbo;
 
 public class Switch : ITurboFunction
 {
-    private static readonly List<IdentifierNode> ArgumentDeclaration =
+    private static readonly List<IParameterNode> ArgumentDeclaration =
     [
         new RestIdentifierNode()
         {
@@ -16,13 +17,13 @@ public class Switch : ITurboFunction
         },
     ];
 
-    public List<IdentifierNode> Arguments => ArgumentDeclaration;
+    public IEnumerable<IParameterNode> Parameters => ArgumentDeclaration;
     
-    public BaseLispValue Execute(Node function, List<Node> parameters, LispScope scope)
+    public BaseLispValue Execute(Node function, List<Node> arguments, LispScope scope)
     {
-        if (parameters.Count < 1) throw Report.Error(new WrongArgumentCountReportMessage(ArgumentDeclaration, parameters.Count), function.Location);
+        if (arguments.Count < 1) throw Report.Error(new WrongArgumentCountReportMessage(ArgumentDeclaration, arguments.Count), function.Location);
 
-        foreach (var parameter in parameters)
+        foreach (var parameter in arguments)
         {
             if (parameter is not ListNode list) throw Report.Error(new WrongArgumentTypeReportMessage("Switch expects each of it's arguments to be lists."), parameter.Location);
             if (list.Nodes.Count != 2) throw Report.Error(new WrongArgumentTypeReportMessage("Each switch item should have two arguments - a condition and a body."), parameter.Location);
