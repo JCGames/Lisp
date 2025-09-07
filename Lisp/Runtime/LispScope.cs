@@ -39,6 +39,11 @@ public class LispScope
         return _parent ?? throw new InvalidOperationException("Cannot pop scope.");
     }
 
+    public bool HasOwnValue(string identifier)
+    {
+        return _scope.ContainsKey(identifier);
+    }
+    
     public BaseLispValue? Read(string identifier)
     {
         var scope = this;

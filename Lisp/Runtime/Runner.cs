@@ -26,10 +26,13 @@ public static class Runner
 
     public static BaseLispValue EvaluateNode(Node node, LispScope scope) => node switch
     {
-        ListNode list => ExecuteList(list, scope),
+        DummyPreEvaluatedNode preEvaluated => preEvaluated.Value, 
+        ListNode list => list.IsQuoted ? new LispListValue(list, scope) : ExecuteList(list, scope),
         IdentifierNode identifier => scope.Read(identifier.Text) ?? throw Report.Error($"{identifier.Text} is undefined.", node.Location),
         NumberLiteralNode number => new LispNumberValue(number.Value),
         StringLiteralNode stringLiteral => new LispStringValue(stringLiteral.Text),
+        StructNode structNode => new LispStructValue(structNode.Struct, scope),
+        SymbolNode symbol => LispSymbolValue.New(symbol.Text),
         _ => throw new NotImplementedException("Unknown token type.")
     };
 

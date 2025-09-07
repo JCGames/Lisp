@@ -1,29 +1,30 @@
 using Lisp.Diagnostics;
 using Lisp.Exceptions;
 using Lisp.Parsing.Nodes;
+using Lisp.Parsing.Nodes.Classifications;
 using Lisp.Types;
 
 namespace Lisp.Turbo.Math;
 
 public class Add : ITurboFunction
 {
-    private static readonly List<IdentifierNode> ArgumentDeclaration =
+    private static readonly List<IParameterNode> ArgumentDeclaration =
     [
-        new()
+        new IdentifierNode()
         {
             Text = "items",
             Location = Location.None
         },
     ];
 
-    public List<IdentifierNode> Arguments => ArgumentDeclaration;
+    public IEnumerable<IParameterNode> Parameters => ArgumentDeclaration;
     
-    public BaseLispValue Execute(Node function, List<Node> parameters, LispScope scope)
+    public BaseLispValue Execute(Node function, List<Node> arguments, LispScope scope)
     {
-        if (parameters.Count < 2) throw Report.Error(new WrongArgumentCountReportMessage(Arguments, parameters.Count, 2), function.Location);
+        if (arguments.Count < 2) throw Report.Error(new WrongArgumentCountReportMessage(Parameters, arguments.Count, 2), function.Location);
 
         var accum = 0m;        
-        foreach (var parameter in parameters)
+        foreach (var parameter in arguments)
         {
             var value = Runner.EvaluateNode(parameter, scope);
             if (value is not LispNumberValue number) throw Report.Error(new WrongArgumentTypeReportMessage("Multiply requires its arguments to be numbers."), parameter.Location);

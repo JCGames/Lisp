@@ -1,4 +1,5 @@
 using Lisp.Parsing.Nodes;
+using Lisp.Parsing.Nodes.Classifications;
 using Lisp.Turbo;
 
 namespace Lisp.Types;
@@ -7,7 +8,7 @@ public class LispTurboFunctionValue : LispValue, IExecutableLispValue
 {
     
     public ITurboFunction Implementation { get; }
-    public List<IdentifierNode> Arguments => Implementation.Arguments;
+    public IEnumerable<IParameterNode> Parameters => Implementation.Parameters;
 
     public LispTurboFunctionValue(ITurboFunction implementation)
     {
@@ -25,9 +26,9 @@ public class LispTurboFunctionValue : LispValue, IExecutableLispValue
         return writer.ToString();
     }
 
-    public BaseLispValue Execute(Node function, List<Node> parameters, LispScope scope)
+    public BaseLispValue Execute(Node function, List<Node> arguments, LispScope scope)
     {
-        return Implementation.Execute(function, parameters, scope);
+        return Implementation.Execute(function, arguments, scope);
     }
 
     protected override bool Equals(BaseLispValue other) =>

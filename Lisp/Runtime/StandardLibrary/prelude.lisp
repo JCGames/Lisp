@@ -10,7 +10,8 @@
 (def if Turbo.If)
 (def switch Turbo.Switch)
 (def debug Turbo.DebugRepl)
+(def get Turbo.Get)
 
 (import "math.lisp")
 (import "boolean.lisp")
-
+(import "collections.lisp")

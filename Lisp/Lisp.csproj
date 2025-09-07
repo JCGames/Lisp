@@ -27,6 +27,10 @@
       <None Update="lib.lisp">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+
+      <None Update="Runtime\StandardLibrary\collections.lisp">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>

@@ -94,6 +94,10 @@ public class Parser
             newList.IsQuoted = true;
             return newList;
         }
+        else if (c is '\'')
+        {
+            return ReadIdentifierToken(c);
+        }
         else if (c is '"')
         {
             return ReadStringLiteralToken(c);
@@ -244,6 +248,19 @@ public class Parser
             return new RestIdentifierNode()
             {
                 Location = location,
+                Text = token[1..]
+            };
+        }
+        else if (token.StartsWith('\''))
+        {
+            return new SymbolNode()
+            {
+                Location = new Location
+                {
+                    Line = _sourceFile.CurrentLine,
+                    Position = _sourceFile.CurrentPosition,
+                    SourceFile = _sourceFile
+                },
                 Text = token[1..]
             };
         }

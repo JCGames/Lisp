@@ -81,7 +81,6 @@ public class _1_1_7_SquareRoot
         Assert.AreEqual("3\n11.7046999107\n1.7737712282\n1000\n", output);
     }
     
-    
     [TestMethod]
     public void TestCubeRootEstimation()
     {

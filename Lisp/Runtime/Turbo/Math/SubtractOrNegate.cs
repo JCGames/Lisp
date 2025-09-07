@@ -1,34 +1,35 @@
 using Lisp.Diagnostics;
 using Lisp.Exceptions;
 using Lisp.Parsing.Nodes;
+using Lisp.Parsing.Nodes.Classifications;
 using Lisp.Types;
 
 namespace Lisp.Turbo.Math;
 
 public class SubtractOrNegate : ITurboFunction
 {
-    private static readonly List<IdentifierNode> ArgumentDeclaration =
+    private static readonly List<IParameterNode> ArgumentDeclaration =
     [
-        new()
+        new IdentifierNode()
         {
             Text = "items",
             Location = Location.None
         },
     ];
 
-    public List<IdentifierNode> Arguments => ArgumentDeclaration;
+    public IEnumerable<IParameterNode> Parameters => ArgumentDeclaration;
     
-    public BaseLispValue Execute(Node function, List<Node> parameters, LispScope scope)
+    public BaseLispValue Execute(Node function, List<Node> arguments, LispScope scope)
     {
-        if (parameters.Count < 1) throw Report.Error(new WrongArgumentCountReportMessage(Arguments, parameters.Count), function.Location);
+        if (arguments.Count < 1) throw Report.Error(new WrongArgumentCountReportMessage(Parameters, arguments.Count), function.Location);
 
-        var accum = GetValue(parameters[0], scope);
-        if (parameters.Count == 1)
+        var accum = GetValue(arguments[0], scope);
+        if (arguments.Count == 1)
         {
             return new LispNumberValue(-accum);
         }
         
-        foreach (var parameter in parameters[1..])
+        foreach (var parameter in arguments[1..])
         {
             var value = GetValue(parameter, scope);
             accum -= value;

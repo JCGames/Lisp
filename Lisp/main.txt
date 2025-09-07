@@ -1,39 +1,39 @@
-﻿; we want labeled parameters
+﻿; ✓ we want structures (dictionaries)
+; ✓ we want d̶o̶t̶ accessors
+; we want labeled parameters
 ; we want variadic args
-; we want structures (dictionaries)
-; we want dot accessors
-; we want windowing graphics library
+; we want w̶i̶n̶d̶o̶w̶i̶n̶g̶ ̶g̶r̶a̶p̶h̶i̶c̶s̶ terminal interface library
 ; *     we want reactivity
 
 ( "Hello, world!)
 
-;(def abs (lambda (x)
-;   (if (< x 0)
-;       (- x)
-;       x)))
-;                   
-;(def square (lambda (x) (* x x)))
-;   
-;(def sqrt-iter (lambda (guess x)
-;    (print "---- iter ----")
-;    (print guess)
-;    (print x)
-;    (print)
-;    (if (good-enough? guess x)
-;        guess
-;        (sqrt-iter (improve guess x) x))))
-;        
-;(def improve (lambda (guess x) (average guess (/ x guess))))
-;
-;(def average (lambda (x y)
-;    (/ (+ x y) 2)))
-;    
-;(def good-enough? (lambda (guess x)
-;    (< (abs (- (square guess) x)) 0.001)))
-;
-;(def sqrt (lambda (x)
-;    (sqrt-iter 1.0 x)))
-;
-;(debug)
-;
-;(print (sqrt 9))
+(def p (lambda (&stuff)
+     (let item (first stuff))
+     (let other (rest stuff))
+     (print item)
+     (if (not (empty? other))
+         (apply p other))))
+     
+(debug)
+
+(p 1 2 3 '(4)) ; 1 2 3 '(4)
+(apply p 1 2 3 '(4 5 6 '(7))) ; 1 2 3 4 5 6 '(7)
+
+(def fib (lambda (n)
+  (switch ((= n 0) 0)
+          ((= n 1) 1)
+          (else (+ (fib (- n 1))
+                   (fib (- n 2)))))))
+
+(print (get dog 'name))
+
+(def struct {
+    a: "a"
+    b: "b"
+    test: (lambda (data) (print data))
+    another-test: {
+        just-one-more-test: (lambda () (print "ok, this is crazy"))}})
+        
+((get struct 'another-test 'just-one-more-test))
+
+(debug)
