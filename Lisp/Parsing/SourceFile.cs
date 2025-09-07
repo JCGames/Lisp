@@ -5,6 +5,7 @@ public class SourceFile
     public FileInfo? FileInfo { get; set; }
     
     public string Text { get; set; }
+    public int EndPosition => Text.Length - 1;
     private readonly List<int> _lineStarts = [];
 
     private int _currentLineZeroIndexed;
@@ -80,6 +81,11 @@ public class SourceFile
         return Text[CurrentPosition];
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="line"></param>
+    /// <returns>start inclusive and end inclusive.</returns>
     public (int start, int end)? GetStartAndEndOfLine(int line)
     {
         if (Text.Length == 0 || _lineStarts.Count == 0) return null;

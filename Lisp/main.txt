@@ -5,10 +5,7 @@
 ; we want windowing graphics library
 ; *     we want reactivity
 
-(def dog {
-    name: "Bob"
-    age: 10 
-})
+( "Hello, world!)
 
 ;(def abs (lambda (x)
 ;   (if (< x 0)
