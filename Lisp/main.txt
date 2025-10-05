@@ -5,7 +5,7 @@
 ; we want w̶i̶n̶d̶o̶w̶i̶n̶g̶ ̶g̶r̶a̶p̶h̶i̶c̶s̶ terminal interface library
 ; *     we want reactivity
 
-( "Hello, world!)
+(print "Hello, world!")
 
 (def p (lambda (&stuff)
      (let item (first stuff))
@@ -14,10 +14,10 @@
      (if (not (empty? other))
          (apply p other))))
      
-(debug)
+; (debug)
 
-(p 1 2 3 '(4)) ; 1 2 3 '(4)
-(apply p 1 2 3 '(4 5 6 '(7))) ; 1 2 3 4 5 6 '(7)
+; (p 1 2 3 '(4)) ; 1 2 3 '(4)
+; (apply p 1 2 3 '(4 5 6 '(7))) ; 1 2 3 4 5 6 '(7)
 
 (def fib (lambda (n)
   (switch ((= n 0) 0)
@@ -25,15 +25,15 @@
           (else (+ (fib (- n 1))
                    (fib (- n 2)))))))
 
-(print (get dog 'name))
+; (print (get dog 'name))
 
-(def struct {
-    a: "a"
-    b: "b"
-    test: (lambda (data) (print data))
-    another-test: {
-        just-one-more-test: (lambda () (print "ok, this is crazy"))}})
+; (def struct {
+;    a: "a"
+;    b: "b"
+;    test: (lambda (data) (print data))
+;    another-test: {
+;        just-one-more-test: (lambda () (print "ok, this is crazy"))}})
         
-((get struct 'another-test 'just-one-more-test))
+; ((get struct 'another-test 'just-one-more-test))
 
-(debug)
+; (debug)

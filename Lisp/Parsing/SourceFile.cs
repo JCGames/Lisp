@@ -112,6 +112,11 @@ public class SourceFile
         return new ReadOnlySpan<char>(_text, start, end - start + 1);
     }
 
+    public bool HasLine(int line)
+    {
+        return line - 1 >= 0 && line < _lines.Count;
+    }
+
     private void DetermineLines()
     {
         var lineStart = 0;
