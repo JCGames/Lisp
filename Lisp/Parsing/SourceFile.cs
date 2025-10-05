@@ -112,8 +112,17 @@ public class SourceFile
         return new ReadOnlySpan<char>(_text, start, end - start + 1);
     }
 
+    public (int start, int end) GetLineSpanWithRelativeStartAndEnd(int line, int globalStart, int globalEnd, out ReadOnlySpan<char> span)
+    {
+        line--;
+        if (line < 0 || line >= _text.Length) throw new ArgumentException("Line number is out of range.");
+        span = new ReadOnlySpan<char>(_text, _lines[line].start, _lines[line].end - _lines[line].start + 1);
+        return (globalStart - _lines[line].start, globalEnd - _lines[line].start);
+    } 
+
     public bool HasLine(int line)
     {
+        line--;
         return line - 1 >= 0 && line < _lines.Count;
     }
 
@@ -138,9 +147,13 @@ public class SourceFile
             }
         }
 
-        if (lineStart < _text.Length - 1)
+        if (lineStart < _text.Length)
         {
             _lines.Add((lineStart, _text.Length - 1));
+        }
+        else if (lineStart == _text.Length)
+        {
+            _lines.Add((lineStart - 1, _text.Length - 1));
         }
     }
 }

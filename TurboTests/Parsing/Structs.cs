@@ -20,6 +20,6 @@ public class Structs
         
         var result = parser.Parse();
         Assert.IsNotNull(result);
-        Assert.IsTrue(result.Any());
+        Assert.IsTrue(result.Count != 0);
     }
 }

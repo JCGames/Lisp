@@ -47,8 +47,27 @@ public static class Report
                 Console.WriteLine($"|{location.Line - 1}\t" + location.SourceFile.GetLineSpan(location.Line - 1).ToString());
             }
             
-            var lineSpan = location.SourceFile.GetLineSpan(location.Line);
-            Console.WriteLine($"|{location.Line}\t{lineSpan.ToString()}");
+            var relative = location.SourceFile.GetLineSpanWithRelativeStartAndEnd(location.Line, location.Start, location.End, out var lineSpan);
+
+            if (relative.start > 0)
+            {
+                Console.Write($"|{location.Line}\t" + lineSpan[..relative.start].ToString());
+            }
+
+            if (relative.end < lineSpan.Length - 1)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.Write(lineSpan[relative.start..(relative.end + 1)].ToString());
+                Console.ForegroundColor = originalForegroundColor;
+                
+                Console.WriteLine(lineSpan[(relative.end + 1)..].ToString());
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(lineSpan[relative.start..].ToString());
+                Console.ForegroundColor = originalForegroundColor;
+            }
             
             if (location.SourceFile.HasLine(location.Line + 1))
             {

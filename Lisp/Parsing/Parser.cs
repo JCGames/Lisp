@@ -83,14 +83,8 @@ public class Parser
 
     private StructNode ReadStruct()
     {
-        var structLocation = new Location
-        {
-            SourceFile = _sourceFile,
-            Line = _sourceFile.CurrentLine,
-            Start = _sourceFile.CurrentPosition,
-            End = _sourceFile.EndOfFilePosition
-        };
-    
+        var structLocation = Location.New(_sourceFile);
+        
         var structNode = new StructNode
         {
             Location = structLocation,
@@ -102,56 +96,41 @@ public class Parser
         while (!_sourceFile.EndOfFile)
         {
             _sourceFile.MoveToNonWhiteSpaceCharacter();
-            if (_sourceFile.Current is '}' || _sourceFile.EndOfFile) break;
-            
-            var location = Location.New(_sourceFile);
-            var node = ReadNode();
-    
-            if (node is null)
-            {
-                throw Report.Error("Must be a label.", Location.New(_sourceFile));
-            }
-            
-            if (node is not IdentifierNode label || label.Text.Length < 2 || !label.Text.EndsWith(':'))
-            {
-                throw Report.Error("Must be a label.", node.Location);
-            }
-            
-            label.Text = label.Text[..^1];
-
-            // skip whitespace but respect end of lines
-            while (_sourceFile is { EndOfFile: false, IsNewLine: false } && char.IsWhiteSpace(_sourceFile.Current))
-            {
-                _sourceFile.MoveNext();
-            }
-
             if (_sourceFile.EndOfFile) break;
-    
-            if (_sourceFile.Current is '}')
-            {
-                throw Report.Error("Must have a value.", label.Location);
-            }
-    
-            node = ReadNode();
-            location.End = _sourceFile.CurrentPosition - 1;
-    
-            if (node is null)
-            {
-                throw Report.Error("Must have a value.", label.Location);
-            }
+            if (_sourceFile.Current is '}') break;
+
+            var label = ReadNode();
+
+            // ensure that the read node is a properly formatted label
+            if (label is not IdentifierNode identifier || identifier.Text.Length < 2 || !identifier.Text.EndsWith(':'))
+                throw Report.Error("This should be a label (i.e., \"name:\").", label?.Location ?? Location.New(_sourceFile));
+            
+            _sourceFile.MoveToNonWhiteSpaceCharacter();
+            if (_sourceFile.EndOfFile) break;
+            if (_sourceFile.Current is '}') break;
+            
+            var value = ReadNode();
+
+            if (value is null) throw Report.Error("This should be a value.", Location.New(_sourceFile));
+
+            identifier.Text = identifier.Text.TrimEnd(':');
             
             structNode.Struct.Add(new KeyValueNode
             {
-                Location = location,
-                Key = label,
-                Value = node
+                Location = Location.New(_sourceFile),
+                Key = identifier,
+                Value = value
             });
         }
         
-        if (_sourceFile is { EndOfFile: true, Current: not '}' })
+        structLocation.End = _sourceFile.CurrentPosition;
+
+        if (_sourceFile.Current is not '}')
         {
-            Report.Error("Missing closing bracket.", structLocation);
+            Report.Error("The structure does not end with a closing bracket.", structLocation);
         }
+        
+        _sourceFile.MoveNext();
         
         return structNode;
     }
@@ -287,6 +266,11 @@ public class Parser
                && (char.IsNumber(_sourceFile.Peek) || _sourceFile.Peek is '.' or ','))
         {
             _sourceFile.MoveNext();
+            if (_sourceFile.Current is ',' && !char.IsNumber(_sourceFile.Peek))
+            {
+                location.End = _sourceFile.CurrentPosition;
+                throw Report.Error("A digit should proceed a comma.", location);
+            }
             
             switch (_sourceFile.Current)
             {
