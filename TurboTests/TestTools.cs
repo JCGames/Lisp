@@ -11,6 +11,7 @@ public static class TestTools
     public static string Run(string programText)
     {
         var writer = new StringWriter();
+        writer.NewLine = "\n";
         Runner.StdOut = writer;
         Report.PreferThrownErrors = true;
         

@@ -2,36 +2,36 @@
 
 public class SourceFile
 {
-    public FileInfo? FileInfo { get; set; }
+    public FileInfo? FileInfo { get; }
     
-    public string Text { get; set; }
-    public int EndPosition => Text.Length - 1;
-    private readonly List<int> _lineStarts = [];
+    private readonly char[] _text;
+    private readonly List<(int start, int end)> _lines = [];
 
-    private int _currentLineZeroIndexed;
-    public int CurrentLine => _currentLineZeroIndexed + 1;
-    public int CurrentPosition { get; private set; }
+    public int CurrentLine { get; private set; } = 1;
+    public int CurrentPosition { get; private set; } = -1;
 
-    public bool EndOfFile => CurrentPosition >= Text.Length;
+    public bool EndOfFile => CurrentPosition >= _text.Length - 1;
+    public int EndOfFilePosition => _text.Length - 1;
+
+    public char Current => CurrentPosition is -1
+        ? throw new InvalidOperationException("You must move to the first character to start reading the source file.")
+        : CurrentPosition < _text.Length
+            ? _text[CurrentPosition]
+            : throw new InvalidOperationException("Oops, reached the end of the source file.");
+
+    public char Peek => CurrentPosition + 1 >= 0 && CurrentPosition + 1 < _text.Length 
+        ? _text[CurrentPosition + 1] 
+        : '\0';
     
+    public bool IsNewLine => 
+        (Current is '\r' && Peek is '\n')
+        || Current is '\r' or '\n';
+     
     public SourceFile(string text)
     {
-        Text = text;
+        _text = text.ToCharArray();
         
-        _lineStarts.Add(0);
-            
-        for (var i = 0; i < Text.Length; i++)
-        {
-            if (Text[i] is '\r' && i + 1 < Text.Length && Text[i + 1] is '\n')
-            {
-                i++;
-                _lineStarts.Add(i + 1);
-            }
-            else if (Text[i] is '\r' or '\n')
-            {
-                _lineStarts.Add(i);
-            }
-        }
+        DetermineLines();
     }
 
     public SourceFile(FileInfo fileInfo)
@@ -39,62 +39,103 @@ public class SourceFile
         try
         {
             FileInfo = fileInfo;
-            Text = File.ReadAllText(fileInfo.FullName);
-
-            _lineStarts.Add(0);
+            _text = File.ReadAllText(fileInfo.FullName).ToCharArray();
             
-            for (var i = 0; i < Text.Length; i++)
-            {
-                if (Text[i] is '\r' && i + 1 < Text.Length && Text[i + 1] is '\n')
-                {
-                    i++;
-                    _lineStarts.Add(i + 1);
-                }
-                else if (Text[i] is '\r' or '\n')
-                {
-                    _lineStarts.Add(i);
-                }
-            }
+            DetermineLines();
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex);
-            Text = string.Empty;
+            _text = [];
         }
     }
 
-    public char ReadChar()
+    public void MoveNext()
     {
-        if (CurrentPosition >= Text.Length) return '\0';
-        
-        if (_currentLineZeroIndexed + 1 < _lineStarts.Count && CurrentPosition == _lineStarts[_currentLineZeroIndexed + 1])
+        if (CurrentPosition >= _text.Length - 1) return;
+
+        // we want to skip this if we haven't moved to the first character yet
+        if (CurrentPosition >= 0)
         {
-            _currentLineZeroIndexed++;
+            if (_text[CurrentPosition] is '\r' && CurrentPosition + 1 < _text.Length &&
+                _text[CurrentPosition + 1] is '\n')
+            {
+                CurrentLine++;
+                CurrentPosition++;
+            }
+            else if (_text[CurrentPosition] is '\r' or '\n')
+            {
+                CurrentLine++;
+            }
         }
         
-        return Text[CurrentPosition++];
+        CurrentPosition++;
+    }
+
+    public void MoveToNextLine()
+    {
+        var lastLine = CurrentLine;
+        while (!EndOfFile && CurrentLine == lastLine)
+        {
+            MoveNext();
+        }
     }
     
-    public char PeekChar()
+    public void MoveToNonWhiteSpaceCharacter()
     {
-        if (CurrentPosition >= Text.Length) return '\0';
-        return Text[CurrentPosition];
+        if (CurrentPosition is -1) MoveNext();
+        
+        while (!EndOfFile && char.IsWhiteSpace(Current))
+        {
+            MoveNext();
+        }
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="line"></param>
-    /// <returns>start inclusive and end inclusive.</returns>
-    public (int start, int end)? GetStartAndEndOfLine(int line)
+    public (int start, int end) GetStartAndEndOfLine(int line)
     {
-        if (Text.Length == 0 || _lineStarts.Count == 0) return null;
-        if (line - 1 < 0) return null;
-        if (line - 1 >= _lineStarts.Count) return null;
+        line--;
+        if (line < 0 || line >= _text.Length) throw new ArgumentException("Line number is out of range.");
+        return (_lines[line].start, _lines[line].end);
+    }
+    
+    public ReadOnlySpan<char> GetLineSpan(int line)
+    {
+        line--;
+        if (line < 0 || line >= _text.Length) throw new ArgumentException("Line number is out of range.");
+        return new ReadOnlySpan<char>(_text, _lines[line].start, _lines[line].end - _lines[line].start + 1);
+    }
 
-        var start = _lineStarts[line - 1];
-        var end = line + 1 < _lineStarts.Count ? _lineStarts[line] : Text.Length; // Text.Length assumes another new line
+    public ReadOnlySpan<char> GetSpan(int start, int end)
+    {
+        if (start < 0 || start >= _text.Length) throw new ArgumentException("Start is out of range.");
+        if (end < 0 || end >= _text.Length) throw new ArgumentException("End is out of range.");
+        return new ReadOnlySpan<char>(_text, start, end - start + 1);
+    }
+
+    private void DetermineLines()
+    {
+        var lineStart = 0;
         
-        return (start, end);
+        for (var lineEnd = 0; lineEnd < _text.Length; lineEnd++)
+        {
+            if (_text[lineEnd] == '\r' && lineEnd + 1 < _text.Length && _text[lineEnd + 1] == '\n')
+            {
+                _lines.Add((lineStart, lineEnd - 1 > lineStart ? lineEnd - 1 : lineStart));
+
+                lineStart = lineEnd + 2;
+                lineEnd++;
+            }
+            else if (_text[lineEnd] is '\r' or '\n')
+            {
+                _lines.Add((lineStart, lineEnd - 1 > lineStart ? lineEnd - 1 : lineStart));
+                
+                lineStart = lineEnd + 1;
+            }
+        }
+
+        if (lineStart < _text.Length - 1)
+        {
+            _lines.Add((lineStart, _text.Length - 1));
+        }
     }
 }
