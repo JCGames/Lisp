@@ -6,4 +6,11 @@
 ; *     we want reactivity
 
 
-(print .)
+(def cat {
+        name: "alfred"
+        person: {
+            age: 10
+        }
+    })
+
+(print (get cat.name.person.age))

@@ -33,7 +33,7 @@ public static class Runner
         StringLiteralNode stringLiteral => new LispStringValue(stringLiteral.Text),
         StructNode structNode => new LispStructValue(structNode.Struct, scope),
         SymbolNode symbol => LispSymbolValue.New(symbol.Text),
-        _ => throw new NotImplementedException("Unknown token type.")
+        _ => throw Report.Error("Incorrect or invalid syntax.", node.Location)
     };
 
     private static BaseLispValue ExecuteList(ListNode listNode, LispScope scope)

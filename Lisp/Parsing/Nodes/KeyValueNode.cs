@@ -18,7 +18,7 @@ public class KeyValueNode : Node, IParameterNode
         indent += "\t";
         writer.WriteLine($"{indent}KEY:");
         Key.Print(indent, writer);
-        writer.WriteLine($"{indent}KEY:");
+        writer.WriteLine($"{indent}VALUE:");
         Value.Print(indent, writer);
     }
 }

@@ -8,7 +8,7 @@ public class Parser
     private readonly SourceFile _sourceFile;
 
     private readonly Func<char, bool> _isCharacterAllowedInIdentifier = c =>
-        c is not ('(' or ')' or '{' or '}' or '"' or '.');
+        c is not ('(' or ')' or '{' or '}' or '"');
     
     public Parser(SourceFile sourceFile)
     {
@@ -219,8 +219,36 @@ public class Parser
         }
         
         location.End = _sourceFile.CurrentPosition;
-        
         _sourceFile.MoveNext();
+
+        var dotSplit = token.Split('.');
+        var start = location.Start;
+
+        if (dotSplit.Length > 1)
+        {
+            return new AccessorNode
+            {
+                Text = token,
+                Location = location,
+                Identifiers = dotSplit.Select(x =>
+                {
+                    var loc = new Location
+                    {
+                        Start = start,
+                        End = start + x.Length - 1,
+                        Line = location.Line,
+                        SourceFile = location.SourceFile,
+                    };
+
+                    start += x.Length + 1;
+                    return new IdentifierNode
+                    {
+                        Location = loc,
+                        Text = x
+                    };
+                }).ToList()
+            };
+        }
         
         if (token.StartsWith('&'))
         {

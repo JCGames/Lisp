@@ -8,6 +8,6 @@ namespace Lisp.Exceptions;
 public class WrongArgumentCountReportMessage : ReportMessage
 {
     public WrongArgumentCountReportMessage(IEnumerable<IParameterNode> expectedArguments, int passedCount, int? requiredCount = null)
-        : base($"{requiredCount ?? expectedArguments.Count()} arguments were required ({string.Join(", ", expectedArguments.Select(x => x.PublicParameterName))}), but {passedCount} was passed.")
+        : base($"{requiredCount ?? expectedArguments.Count()} {(requiredCount > 1 ? "arguments were" : "argument was")} required ({string.Join(", ", expectedArguments.Select(x => x.PublicParameterName))}), but {passedCount} {(passedCount > 1 ? "were" : "was")} passed.")
     { }
 }

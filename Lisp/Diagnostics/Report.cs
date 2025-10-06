@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Lisp.Exceptions;
+using Lisp.Parsing.Nodes.Classifications;
 
 namespace Lisp.Diagnostics;
 
@@ -86,5 +87,14 @@ public static class Report
         
         Environment.Exit(1);
         return new Exception();
+    }
+
+    [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
+    public static void AssertArgumentCount(IEnumerable<IParameterNode> parameters, int realCount, Location? location = null)
+    {
+        if (parameters.Count() != realCount)
+        {
+            throw Error(new WrongArgumentCountReportMessage(parameters, realCount), location);
+        }
     }
 }

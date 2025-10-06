@@ -1,6 +1,8 @@
-﻿namespace Lisp.Parsing.Nodes;
+﻿using Lisp.Parsing.Nodes.Classifications;
 
-public class AccessorNode : Node
+namespace Lisp.Parsing.Nodes;
+
+public class AccessorNode : TokenNode, IParameterNode
 {
     public List<IdentifierNode> Identifiers { get; set; }
     
@@ -17,4 +19,6 @@ public class AccessorNode : Node
         
         writer?.WriteLine($"{indent}]");
     }
+
+    public string PublicParameterName => "accessor";
 }
