@@ -95,6 +95,11 @@ public class Parser
             _sourceFile.MoveToNonWhiteSpaceCharacter();
             if (_sourceFile.EndOfFile) break;
             if (_sourceFile.Current is '}') break;
+            if (_sourceFile.Current is ';')
+            {
+                _sourceFile.MoveToNextLine();
+                continue;
+            }
 
             var label = ReadNode();
 
@@ -105,6 +110,11 @@ public class Parser
             _sourceFile.MoveToNonWhiteSpaceCharacter();
             if (_sourceFile.EndOfFile) break;
             if (_sourceFile.Current is '}') break;
+            if (_sourceFile.Current is ';')
+            {
+                _sourceFile.MoveToNextLine();
+                continue;
+            }
             
             var value = ReadNode();
 

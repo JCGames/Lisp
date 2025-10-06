@@ -6,11 +6,14 @@
 ; *     we want reactivity
 
 
-(def cat {
-        name: "alfred"
-        person: {
-            age: 10
-        }
+(let vectorA {
+        x: 2
+        y: 5.5
     })
-
-(print (get cat.person.age))
+    
+(let vectorB {
+        x: 10
+        ; y: 20
+    })
+    
+(print (cross vectorA vectorB))
