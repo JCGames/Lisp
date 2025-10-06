@@ -13,4 +13,4 @@
         }
     })
 
-(print (get cat.name.person.age))
+(print (get cat.person.age))

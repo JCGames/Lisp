@@ -11,9 +11,9 @@ var parser = new Parser(sourceFile);
 var standardLibraryList = parserStandardLibrary.Parse();
 var list = parser.Parse();
 
-foreach (var listNode in list)
-{
-    listNode.Print("", Console.Out);
-}
+// foreach (var listNode in list)
+// {
+//     listNode.Print("", Console.Out);
+// }
 
 Runner.Run([..standardLibraryList, ..list]);
