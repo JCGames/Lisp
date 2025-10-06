@@ -56,7 +56,7 @@ public static class Runner
 
         foreach (var turboFunction in turboFunctions)
         {
-            var name = $"Turbo.{turboFunction.Name}";
+            var name = $"Turbo:{turboFunction.Name}";
             var value = new LispTurboFunctionValue((ITurboFunction)Activator.CreateInstance(turboFunction)!);
             
             scope.UpdateGlobalScope(name, value);

@@ -6,6 +6,9 @@ namespace Lisp.Parsing;
 public class Parser
 {
     private readonly SourceFile _sourceFile;
+
+    private readonly Func<char, bool> _isCharacterAllowedInIdentifier = c =>
+        c is not ('(' or ')' or '{' or '}' or '"' or '.');
     
     public Parser(SourceFile sourceFile)
     {
@@ -35,13 +38,7 @@ public class Parser
             }
             else
             {
-                Report.Error("Only lisps are allowed on the top level.", new Location
-                {
-                    Start = _sourceFile.Current,
-                    End = _sourceFile.Current,
-                    Line = _sourceFile.CurrentLine,
-                    SourceFile = _sourceFile
-                });
+                Report.Error("Only lisps are allowed on the top level.", Location.New(_sourceFile));
             }
         }
 
@@ -72,7 +69,7 @@ public class Parser
         {
             return ReadStruct();
         }
-        else
+        else if (_isCharacterAllowedInIdentifier(_sourceFile.Current))
         {
             // probably just a token then
             return ReadIdentifierToken();
@@ -101,7 +98,7 @@ public class Parser
 
             var label = ReadNode();
 
-            // ensure that the read node is a properly formatted label
+            // ensure that the node is a properly formatted label
             if (label is not IdentifierNode identifier || identifier.Text.Length < 2 || !identifier.Text.EndsWith(':'))
                 throw Report.Error("This should be a label (i.e., \"name:\").", label?.Location ?? Location.New(_sourceFile));
             
@@ -167,13 +164,7 @@ public class Parser
             }
             else
             {
-                Report.Error("This is not correct syntax.", new Location
-                {
-                    Start = _sourceFile.Current,
-                    End = _sourceFile.Current,
-                    Line = _sourceFile.CurrentLine,
-                    SourceFile = _sourceFile
-                });
+                Report.Error("This is not correct syntax.", Location.New(_sourceFile));
             }
         }
         
@@ -221,7 +212,7 @@ public class Parser
         
         while (!_sourceFile.EndOfFile 
                && !char.IsWhiteSpace(_sourceFile.Peek) 
-               && _sourceFile.Peek is not '(' and not ')')
+               && _isCharacterAllowedInIdentifier(_sourceFile.Peek))
         {
             _sourceFile.MoveNext();
             token += _sourceFile.Current;

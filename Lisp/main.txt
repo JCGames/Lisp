@@ -5,4 +5,5 @@
 ; we want w̶i̶n̶d̶o̶w̶i̶n̶g̶ ̶g̶r̶a̶p̶h̶i̶c̶s̶ terminal interface library
 ; *     we want reactivity
 
-(def name value)
+
+(print .)

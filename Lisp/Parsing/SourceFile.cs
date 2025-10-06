@@ -11,7 +11,6 @@ public class SourceFile
     public int CurrentPosition { get; private set; } = -1;
 
     public bool EndOfFile => CurrentPosition >= _text.Length - 1;
-    public int EndOfFilePosition => _text.Length - 1;
 
     public char Current => CurrentPosition is -1
         ? throw new InvalidOperationException("You must move to the first character to start reading the source file.")

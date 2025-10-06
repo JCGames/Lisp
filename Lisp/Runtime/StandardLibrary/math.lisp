@@ -1,8 +1,8 @@
-(def * Turbo.Multiply)
-(def / Turbo.Divide)
-(def + Turbo.Add)
-(def - Turbo.SubtractOrNegate)
-(def % Turbo.Modulo)
+(def * Turbo:Multiply)
+(def / Turbo:Divide)
+(def + Turbo:Add)
+(def - Turbo:SubtractOrNegate)
+(def % Turbo:Modulo)
 
 ; increment
 (def inc (lambda (a)
